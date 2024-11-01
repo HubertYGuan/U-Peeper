@@ -1,1 +1,8 @@
 .venv/
+.west/
+webserver/src/__pycache__/
+modules/
+bootloader/
+tools/
+zephyr/*
+!zephyr/U-PeeperApp
