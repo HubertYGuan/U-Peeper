@@ -6,3 +6,5 @@ bootloader/
 tools/
 zephyr/*
 !zephyr/U-PeeperApp
+zephyr/U-PeeperApp/src/wifi_settings.h
+.vscode/

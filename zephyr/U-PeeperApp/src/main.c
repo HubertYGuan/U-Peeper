@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include "wifi_settings.h"
 
 int main()
 {
