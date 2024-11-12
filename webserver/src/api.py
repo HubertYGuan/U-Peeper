@@ -13,7 +13,7 @@ import time
 import datetime
 from dotenv import load_dotenv
 import os
-from redis import Redis
+
 
 
 async def find_event_type(event_type: str, db: AsyncSession):

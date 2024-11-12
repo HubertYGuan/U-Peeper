@@ -1,4 +1,4 @@
-.venv/
+*.venv/
 .west/
 webserver/src/__pycache__/
 modules/
@@ -8,3 +8,5 @@ zephyr/*
 !zephyr/U-PeeperApp
 zephyr/U-PeeperApp/src/wifi_settings.h
 .vscode/
+*.env
+*__pycache__/

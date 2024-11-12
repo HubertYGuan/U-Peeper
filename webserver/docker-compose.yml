@@ -1,0 +1,15 @@
+services:
+  webapp:
+    build: .
+    env_file:
+      - ".env"
+    command: sh -c "/usr/local/bin/supervisord"
+    ports:
+      - ${BACKEND_PORT}:${BACKEND_PORT}
+      - ${FRONTEND_PORT}:${FRONTEND_PORT}
+    working_dir: /app
+    volumes:
+      - ./:/app
+      - DB_Data:/var/lib/db_data
+volumes:
+  DB_Data:

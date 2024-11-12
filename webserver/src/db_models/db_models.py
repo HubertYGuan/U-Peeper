@@ -1,4 +1,5 @@
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
+from sqlalchemy import ForeignKey, ForeignKeyConstraint
 from typing import List
 
 
@@ -20,6 +21,7 @@ class Event(DB_Base):
     description: Mapped[str]
     event_type: Mapped["Event_Type"] = relationship(back_populates="events")
     rowid: Mapped[int] = mapped_column(primary_key=True)
+    type_id: Mapped[int] = mapped_column(ForeignKey("event_types.rowid"))
 
     def __repr__(self) -> str:
         return f"Event at {self.timestamp} of type {self.event_type.name} with description: {self.description}"

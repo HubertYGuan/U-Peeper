@@ -1,0 +1,13 @@
+2024-11-12 03:17:56,544 CRIT Supervisor is running as root.  Privileges were not dropped because no user is specified in the config file.  If you intend to run as root, you can set user=root in the config file to avoid this message.
+2024-11-12 03:17:56,546 INFO supervisord started with pid 6
+2024-11-12 03:17:57,566 INFO spawned: 'backend' with pid 7
+2024-11-12 03:17:57,568 INFO spawned: 'frontend' with pid 8
+2024-11-12 03:17:58,097 WARN exited: frontend (exit status 0; not expected)
+2024-11-12 03:17:59,236 INFO success: backend entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2024-11-12 03:17:59,238 INFO spawned: 'frontend' with pid 13
+2024-11-12 03:17:59,693 WARN exited: frontend (exit status 0; not expected)
+2024-11-12 03:18:01,700 INFO spawned: 'frontend' with pid 15
+2024-11-12 03:18:02,150 WARN exited: frontend (exit status 0; not expected)
+2024-11-12 03:18:05,157 INFO spawned: 'frontend' with pid 17
+2024-11-12 03:18:05,588 WARN exited: frontend (exit status 0; not expected)
+2024-11-12 03:18:06,590 INFO gave up: frontend entered FATAL state, too many start retries too quickly

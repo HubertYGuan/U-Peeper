@@ -39,12 +39,17 @@ async def Create_Tables():
 
 async def Insert_Default():
     session = DB_Session()
-    await session.execute(
-        insert(Event_Type).values(
-            name="Turn On",
-            events=[Event(datetime.now(), datetime.now().ctime(), "Test Event")]
-        )
+    turn_on = Event_Type(
+        name="Turn On",
+        events=[
+            Event(
+                timestamp=datetime.now().isoformat(),
+                raw_timestamp=datetime.now().timestamp(),
+                description="Test Event",
+            ),
+        ]
     )
+    session.add_all([turn_on])
     await session.commit()
 
 
