@@ -36,7 +36,7 @@ async def Create_Tables():
     async with DB_engine.begin() as conn:
         await conn.run_sync(DB_Base.metadata.create_all)
 
-
+# TODO: Change this to insert the actual default event_types (tbd) (and possibly an init event)
 async def Insert_Default():
     session = DB_Session()
     turn_on = Event_Type(

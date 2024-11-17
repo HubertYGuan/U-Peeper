@@ -28,14 +28,14 @@ app = FastAPI()
 
 @app.get("/")
 def root():
-    return {"message": "Cool test json"}
+    return {"message": "Cool test json, also go to /docs to get the docs"}
 
 
 # I don't feel like doing an auth system tbh
 # So don't expose it to the open internet
 
 
-@app.get("/read/{rowid}")
+@app.get("/events/read/{rowid}")
 async def read_events(rowid: int | None = None, db: AsyncSession = Depends(Get_DB)):
     if rowid is None:
         results = await db.execute(select(Event))
@@ -46,8 +46,19 @@ async def read_events(rowid: int | None = None, db: AsyncSession = Depends(Get_D
         events_list = results.scalars().first()
         return {f"Driving event {rowid}:": events_list}
 
+@app.get("/event_types/read/{rowid}")
+async def read_event_types(rowid: int | None = None, db: AsyncSession = Depends(Get_DB)):
+    if rowid is None:
+        results = await db.execute(select(Event_Type))
+        event_types_list = results.scalars().all()
+        return {"Event types:": event_types_list}
+    else:
+        results = await db.execute(select(Event_Type).where(Event_Type.rowid == rowid))
+        events_types_list = results.scalars().first()
+        return {f"Event type {rowid}:": events_types_list}
 
-@app.put("/update/{rowid}")
+
+@app.put("/events/update/{rowid}")
 async def update_event(
     rowid: int | None = None,
     description: str | None = None,
@@ -74,7 +85,7 @@ async def update_event(
     return results.scalars().first()
 
 
-@app.post("/add/")
+@app.post("/events/add")
 async def add_event(
     description: str | None = None,
     raw_timestamp: str | None = None,
@@ -98,7 +109,7 @@ async def add_event(
     return results.scalars().first()
 
 
-@app.delete("/delete/{rowid}")
+@app.delete("/events/delete/{rowid}")
 async def delete_event(rowid: int, db: AsyncSession = Depends(Get_DB)):
     await db.execute(delete(Event).where(Event.rowid == rowid))
     await db.commit()
