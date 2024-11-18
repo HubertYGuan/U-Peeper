@@ -10,3 +10,5 @@ zephyr/U-PeeperApp/src/wifi_settings.h
 .vscode/
 *.env
 *__pycache__/
+*supervisord.log
+*supervisord.pid
