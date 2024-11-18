@@ -35,27 +35,28 @@ def root():
 # So don't expose it to the open internet
 
 
-@app.get("/events/read/{rowid}")
-async def read_events(rowid: int | None = None, db: AsyncSession = Depends(Get_DB)):
-    if rowid is None:
-        results = await db.execute(select(Event))
-        events_list = results.scalars().all()
-        return {"Driving events:": events_list}
-    else:
-        results = await db.execute(select(Event).where(Event.rowid == rowid))
-        events_list = results.scalars().first()
-        return {f"Driving event {rowid}:": events_list}
+@app.get("/events/read/")
+async def read_events(db: AsyncSession = Depends(Get_DB)):
+    results = await db.execute(select(Event))
+    events_list = results.scalars().all()
+    return {"Driving events:": events_list}
 
+@app.get("/events/read/{rowid}")
+async def read_event(rowid: int | None = None, db: AsyncSession = Depends(Get_DB)):
+    results = await db.execute(select(Event).where(Event.rowid == rowid))
+    events_list = results.scalars().first()
+    return {f"Driving event {rowid}:": events_list}
+
+@app.get("/event_types/read/")
+async def read_event_types(db: AsyncSession = Depends(Get_DB)):
+    results = await db.execute(select(Event_Type))
+    event_types_list = results.scalars().all()
+    return {"Event types:": event_types_list}
 @app.get("/event_types/read/{rowid}")
-async def read_event_types(rowid: int | None = None, db: AsyncSession = Depends(Get_DB)):
-    if rowid is None:
-        results = await db.execute(select(Event_Type))
-        event_types_list = results.scalars().all()
-        return {"Event types:": event_types_list}
-    else:
-        results = await db.execute(select(Event_Type).where(Event_Type.rowid == rowid))
-        events_types_list = results.scalars().first()
-        return {f"Event type {rowid}:": events_types_list}
+async def read_event_type(rowid: int | None = None, db: AsyncSession = Depends(Get_DB)):
+    results = await db.execute(select(Event_Type).where(Event_Type.rowid == rowid))
+    events_types_list = results.scalars().first()
+    return {f"Event type {rowid}:": events_types_list}
 
 
 @app.put("/events/update/{rowid}")
