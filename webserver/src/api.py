@@ -7,13 +7,13 @@ from starlette.middleware.base import BaseHTTPMiddleware
 from pydantic import BaseModel
 from sqlalchemy import select, update, delete, insert
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
 from db_models.db_models import Event, Event_Type
 from databaseinit import Get_DB
 import time
 import datetime
 from dotenv import load_dotenv
 import os
-
 
 
 async def find_event_type(event_type: str, db: AsyncSession):
@@ -37,24 +37,38 @@ def root():
 
 @app.get("/events/read/")
 async def read_events(db: AsyncSession = Depends(Get_DB)):
-    results = await db.execute(select(Event))
+    results = await db.execute(select(Event).options(selectinload(Event.event_type)))
     events_list = results.scalars().all()
     return {"Driving events:": events_list}
 
+
 @app.get("/events/read/{rowid}")
-async def read_event(rowid: int | None = None, db: AsyncSession = Depends(Get_DB)):
-    results = await db.execute(select(Event).where(Event.rowid == rowid))
+async def read_event(rowid: int, db: AsyncSession = Depends(Get_DB)):
+    results = await db.execute(
+        select(Event)
+        .options(selectinload(Event.event_type))
+        .where(Event.rowid == rowid)
+    )
     events_list = results.scalars().first()
     return {f"Driving event {rowid}:": events_list}
 
+
 @app.get("/event_types/read/")
 async def read_event_types(db: AsyncSession = Depends(Get_DB)):
-    results = await db.execute(select(Event_Type))
+    results = await db.execute(
+        select(Event_Type).options(selectinload(Event_Type.events))
+    )
     event_types_list = results.scalars().all()
     return {"Event types:": event_types_list}
+
+
 @app.get("/event_types/read/{rowid}")
-async def read_event_type(rowid: int | None = None, db: AsyncSession = Depends(Get_DB)):
-    results = await db.execute(select(Event_Type).where(Event_Type.rowid == rowid))
+async def read_event_type(rowid: int, db: AsyncSession = Depends(Get_DB)):
+    results = await db.execute(
+        select(Event_Type)
+        .options(selectinload(Event_Type.events))
+        .where(Event_Type.rowid == rowid)
+    )
     events_types_list = results.scalars().first()
     return {f"Event type {rowid}:": events_types_list}
 
