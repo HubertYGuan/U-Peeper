@@ -9,7 +9,7 @@ west init -l zephyr
 west update
 ```
 
-Make sure that you configure a `wifi_settings.h` file in `zephyr/U-PeeperApp/src` with `#define` statements for `WIFI_SSID`, `WIFI_PSK`
+Make sure that you configure a `wifi_settings.h` file in `zephyr/U-PeeperApp/src` with `#define` statements for `SSID`, `PSK`
 
 Run this to build the application:
 ```
