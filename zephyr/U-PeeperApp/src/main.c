@@ -19,6 +19,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include "websockets.h"
+#include "ping.h"
+#include "http_requests.h"
 
 static K_SEM_DEFINE(wifi_connected, 0, 1);
 static K_SEM_DEFINE(ipv4_address_obtained, 0, 1);
@@ -175,6 +177,18 @@ int main(void)
 	k_sem_take(&ipv4_address_obtained, K_FOREVER);
 	printk("Ready...\n\n");
 
+	// Try to ping Google
+	ping("8.8.8.8", 5);
+
+    printk("\nLooking up IP addresses:\n");
+	struct zsock_addrinfo *res;
+    /*
+     * struct sock_addr s_addr;
+     * res->ai_addr = &s_addr;
+    */
+    nslookup("google.com", &res);
+	PrintAddrInfoResults(&res);
+
 	/*
 	 * HTTP DOESN'T WORK AT ALL
 	 * JUST USE CLASSIC STREAM SOCKETS (TCP/IP) FOR NETWORKING
@@ -185,11 +199,11 @@ int main(void)
 	int sock4 = -1;
 	int websock4 = -1;
 	int32_t timeout = 3 * MSEC_PER_SEC;
-	struct sockaddr_in addr4;
+	// struct sockaddr_in addr4;
 	size_t amount;
 
-	(void)connect_socket(AF_INET, BACKEND_HOST, 80, &sock4, (struct sockaddr *)&addr4,
-			     sizeof(addr4));
+    printk("\nConnecting to HTTP Server:\n");
+	sock4 = ConnectSocket(&res, 80);
 
 	if (sock4 < 0) {
 		printk("Cannot create HTTP connection.");
