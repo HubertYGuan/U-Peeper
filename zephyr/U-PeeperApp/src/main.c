@@ -111,8 +111,10 @@ void wifi_connect(void)
 
 	wifi_params.ssid = SSID;
 	wifi_params.ssid_length = strlen(SSID);
+	wifi_params.psk = PSK;
+	wifi_params.psk_length = strlen(PSK);
 	wifi_params.channel = WIFI_CHANNEL_ANY;
-	wifi_params.security = WIFI_SECURITY_TYPE_NONE;
+	wifi_params.security = WIFI_SECURITY_TYPE_PSK;
 	wifi_params.band = WIFI_FREQ_BAND_2_4_GHZ;
 	wifi_params.mfp = WIFI_MFP_OPTIONAL;
 
@@ -189,14 +191,11 @@ int main(void)
     nslookup("google.com", &res);
 	PrintAddrInfoResults(&res);
 
-	/*
-	 * HTTP DOESN'T WORK AT ALL
-	 * JUST USE CLASSIC STREAM SOCKETS (TCP/IP) FOR NETWORKING
-	 */
-
-	/* Just an example how to set extra headers */
-	const char *extra_headers[] = {"Origin: http://foobar\r\n", NULL};
 	int sock4 = -1;
+
+	
+
+	/*
 	int websock4 = -1;
 	int32_t timeout = 3 * MSEC_PER_SEC;
 	// struct sockaddr_in addr4;
@@ -216,7 +215,6 @@ int main(void)
 
 	req.host = BACKEND_HOST;
 	req.url = "/";
-	req.optional_headers = extra_headers;
 	req.cb = connect_cb;
 	req.tmp_buf = temp_recv_buf_ipv4;
 	req.tmp_buf_len = sizeof(temp_recv_buf_ipv4);
@@ -255,6 +253,7 @@ int main(void)
 	if (sock4 >= 0) {
 		close(sock4);
 	}
+	*/
 
 	// Stay connected for 30 seconds, then disconnect.
 	k_sleep(K_SECONDS(30));

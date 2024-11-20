@@ -57,6 +57,10 @@ void ping(char* ipv4_addr, uint8_t count)
 		if (ret != 0) {
 			printk("Failed to send ping, err: %d", ret);
 		}
+        else
+        {
+            printk("Pinged google bruv");
+        }
 		k_sleep(K_SECONDS(2));
 	}
 
