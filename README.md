@@ -19,3 +19,6 @@ west build -p always -b esp32_devkitc_wroom U-PeeperApp
 
 I tried using workspaces for the app but it kept annoying me with "ESP_IDF_PATH is not set" or something like that and it wouldn't go away even if I set environment variables and included a set() in cmakelists so we're just going to use an in-repository app.
 
+
+
+Credit to the Zephyr team for creating the RTOS and example projects as well as Craig Peacock at https://github.com/craigpeacock/Zephyr_WiFi/ for open-source zephyr wifi code adapted in this project.
