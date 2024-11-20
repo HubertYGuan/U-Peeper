@@ -1,4 +1,12 @@
-from fastapi import FastAPI, HTTPException, Depends, Response, Request, status
+from fastapi import (
+    FastAPI,
+    HTTPException,
+    Depends,
+    Response,
+    Request,
+    status,
+    WebSocket,
+)
 from fastapi.responses import StreamingResponse
 from typing import Annotated, Optional
 from fastapi.security import HTTPBearer, HTTPBasicCredentials
@@ -129,3 +137,12 @@ async def delete_event(rowid: int, db: AsyncSession = Depends(Get_DB)):
     await db.execute(delete(Event).where(Event.rowid == rowid))
     await db.commit()
     return {f"Driving event {rowid} deleted (probably)"}
+
+
+@app.websocket("/ws/")
+async def main_websocket(websocket: WebSocket):
+    await websocket.accept()
+    # Infinite loop bad
+    while True:
+        data = await websocket.receive_text()
+        await websocket.send_text(f"Message text was: {data}")
