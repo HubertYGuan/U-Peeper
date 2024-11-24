@@ -28,8 +28,6 @@ static K_SEM_DEFINE(ipv4_address_obtained, 0, 1);
 static struct net_mgmt_event_callback wifi_cb;
 static struct net_mgmt_event_callback ipv4_cb;
 
-
-
 static void handle_wifi_connect_result(struct net_mgmt_event_callback *cb)
 {
 	const struct wifi_status *status = (const struct wifi_status *)cb->info;
@@ -50,7 +48,6 @@ static void handle_wifi_disconnect_result(struct net_mgmt_event_callback *cb)
 		printk("Disconnection request (%d)\n", status->status);
 	} else {
 		printk("Disconnected\n");
-		k_sem_take(&wifi_connected, K_NO_WAIT);
 	}
 }
 
@@ -111,10 +108,8 @@ void wifi_connect(void)
 
 	wifi_params.ssid = SSID;
 	wifi_params.ssid_length = strlen(SSID);
-	wifi_params.psk = PSK;
-	wifi_params.psk_length = strlen(PSK);
 	wifi_params.channel = WIFI_CHANNEL_ANY;
-	wifi_params.security = WIFI_SECURITY_TYPE_PSK;
+	wifi_params.security = WIFI_SECURITY_TYPE_NONE;
 	wifi_params.band = WIFI_FREQ_BAND_2_4_GHZ;
 	wifi_params.mfp = WIFI_MFP_OPTIONAL;
 
@@ -139,8 +134,6 @@ void wifi_status(void)
 		printk("WiFi Status Request Failed\n");
 	}
 
-	printk("bruh123\n");
-
 	if (status.state >= WIFI_STATE_ASSOCIATED) {
 		printk("SSID: %-32s\n", status.ssid);
 		printk("Band: %s\n", wifi_band_txt(status.band));
@@ -159,9 +152,9 @@ void wifi_disconnect(void)
 	}
 }
 
-int main(void)
+// returns the socket fd and -1 upon fail
+int connect_and_get_socket(void)
 {
-
 	printk("U-Peeper WiFi App\nBoard: %s\n", CONFIG_BOARD);
 
 	net_mgmt_init_event_callback(&wifi_cb, wifi_mgmt_event_handler,
@@ -179,85 +172,99 @@ int main(void)
 	k_sem_take(&ipv4_address_obtained, K_FOREVER);
 	printk("Ready...\n\n");
 
-	// Try to ping Google
-	ping("8.8.8.8", 5);
+	printk("\nLooking up IP addresses:\n");
 
-    printk("\nLooking up IP addresses:\n");
 	struct zsock_addrinfo *res;
-    /*
-     * struct sock_addr s_addr;
-     * res->ai_addr = &s_addr;
-    */
-    nslookup("google.com", &res);
+	int st, sock = -1;
+	static struct zsock_addrinfo hints;
+	/*
+	 * struct sock_addr s_addr;
+	 * res->ai_addr = &s_addr;
+	 */
+
+	hints.ai_family = AF_INET;
+	hints.ai_socktype = SOCK_STREAM;
+
+	st = zsock_getaddrinfo(BACKEND_HOST, BACKEND_PORT, &hints, &res);
+	if (st) {
+		printf("Unable to resolve address, quitting\n");
+
+		k_sleep(K_SECONDS(5));
+		wifi_disconnect();
+		// Error codes aren't really supported right now
+		return 0;
+	}
+
 	PrintAddrInfoResults(&res);
 
-	int sock4 = -1;
+	printk("bConnecting to HTTP Server:\n");
+	sock = ConnectSocket(&res, 8080);
 
-	
+	int httpret = HTTPRequest(sock, BACKEND_HOST, "/", HTTP_GET);
+	if (httpret < 0) {
+		zsock_close(sock);
 
-	/*
-	int websock4 = -1;
+		wifi_disconnect();
+		return -1;
+	}
+	return sock;
+}
+
+// returns websocket fd
+int connect_websocket(int sock)
+{
+	int websock = -1;
 	int32_t timeout = 3 * MSEC_PER_SEC;
 	// struct sockaddr_in addr4;
-	size_t amount;
 
-    printk("\nConnecting to HTTP Server:\n");
-	sock4 = ConnectSocket(&res, 80);
-
-	if (sock4 < 0) {
-		printk("Cannot create HTTP connection.");
-		k_sleep(K_FOREVER);
-	}
+	printk("\nConnecting to HTTP Server:\n");
 
 	struct websocket_request req;
 
 	memset(&req, 0, sizeof(req));
 
 	req.host = BACKEND_HOST;
-	req.url = "/";
+	req.url = "/ws/";
 	req.cb = connect_cb;
 	req.tmp_buf = temp_recv_buf_ipv4;
 	req.tmp_buf_len = sizeof(temp_recv_buf_ipv4);
 
-	websock4 = websocket_connect(sock4, &req, timeout, "IPv4");
-	if (websock4 < 0) {
-		printk("Cannot connect to %s:%d", BACKEND_HOST, 80);
-		close(sock4);
+	websock = websocket_connect(sock, &req, timeout, "IPv4");
+	if (websock < 0) {
+		printk("Cannot connect to %s:%d", BACKEND_HOST, 8080);
+		return websock;
 	}
 
-	if (websock4 < 0) {
-		printk("No IPv4 connectivity");
-		k_sleep(K_FOREVER);
-	}
+	printk("Websocket IPv4 %d", websock);
+	return websock;
+}
 
-	printk("Websocket IPv4 %d", websock4);
-    
-    int retries = 0;
+int main(void)
+{
+	// NASA would be pissed that I don't have max iterations on these loops
+	int sock = -1;
+	do {
+		k_sleep(K_SECONDS(1));
+		sock = connect_and_get_socket();
+	} while (sock < 0);
+
+	int websock = -1;
+	do {
+		k_sleep(K_SECONDS(1));
+		sock = connect_websocket(sock);
+	} while (sock < 0);
+	size_t amount;
+	int retries = 0;
 	while (retries < 10) {
-        printk("Sending Lorem Message");
+		printk("Sending Lorem Message");
 		amount = how_much_to_send(ipsum_len);
 
-		if (websock4 >= 0 && !send_and_wait_msg(websock4, amount, "IPv4", recv_buf_ipv4,
-							sizeof(recv_buf_ipv4))) {
+		if (websock >= 0 && !send_and_wait_msg(websock, amount, "IPv4", recv_buf_ipv4,
+						       sizeof(recv_buf_ipv4))) {
 			break;
 		}
 
 		k_sleep(K_MSEC(250));
-        retries++;
+		retries++;
 	}
-
-	if (websock4 >= 0) {
-		close(websock4);
-	}
-
-	if (sock4 >= 0) {
-		close(sock4);
-	}
-	*/
-
-	// Stay connected for 30 seconds, then disconnect.
-	k_sleep(K_SECONDS(30));
-	wifi_disconnect();
-
-	return (0);
 }

@@ -4,7 +4,6 @@
 #include <zephyr/net/http/client.h>
 #include <zephyr/net/socket.h>
 
-void nslookup(const char * hostname, struct zsock_addrinfo **results);
 void PrintAddrInfoResults(struct zsock_addrinfo **results);
 int HTTPRequest(int sock, char * hostname, char * url, enum http_method method);
 

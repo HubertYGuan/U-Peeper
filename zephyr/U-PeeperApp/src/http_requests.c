@@ -4,17 +4,7 @@
 #include <zephyr/kernel.h>
 #include "http_requests.h"
 
-void nslookup(const char *hostname, struct zsock_addrinfo **results)
-{
-	struct zsock_addrinfo hints = {
-		.ai_family = AF_INET, // Allow only IPv4 (mainly since it's easier)
-		.ai_socktype = SOCK_STREAM,
-	};
-	int err = zsock_getaddrinfo(hostname, NULL, &hints, (struct zsock_addrinfo **)results);
-	if (err) {
-		printf("Failed to get addr info: %d", err);
-	}
-}
+
 
 void PrintAddrInfoResults(struct zsock_addrinfo **results)
 {

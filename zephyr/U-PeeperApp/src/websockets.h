@@ -1,4 +1,5 @@
 #ifndef WEBSOCKETS_H
+#define WEBSOCKETS_H 6.9
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(net_websocket_client_sample, LOG_LEVEL_DBG);
@@ -11,7 +12,7 @@ LOG_MODULE_REGISTER(net_websocket_client_sample, LOG_LEVEL_DBG);
 #include <zephyr/shell/shell.h>
 #include "wifi_settings.h"
 
-#define SERVER_ADDR4 "BACKEND_HOST"
+#define SERVER_ADDR4 BACKEND_HOST
 
 static const char lorem_ipsum[] = LOREM_IPSUM;
 
@@ -27,46 +28,6 @@ uint8_t recv_buf_ipv4[MAX_RECV_BUF_LEN];
 #define EXTRA_BUF_SPACE 30
 
 uint8_t temp_recv_buf_ipv4[MAX_RECV_BUF_LEN + EXTRA_BUF_SPACE];
-
-int setup_socket(sa_family_t family, const char *server, int port, int *sock, struct sockaddr *addr,
-		 socklen_t addr_len)
-{
-	const char *family_str = "IPv4";
-	int ret = 0;
-
-	memset(addr, 0, addr_len);
-
-	net_sin(addr)->sin_family = AF_INET;
-	net_sin(addr)->sin_port = htons(port);
-	inet_pton(family, server, &net_sin(addr)->sin_addr);
-
-	*sock = socket(family, SOCK_STREAM, IPPROTO_TCP);
-
-	if (*sock < 0) {
-		printk("Failed to create %s HTTP socket (%d)", family_str, -errno);
-	}
-
-	return ret;
-}
-
-int connect_socket(sa_family_t family, const char *server, int port, int *sock,
-		   struct sockaddr *addr, socklen_t addr_len)
-{
-	int ret;
-
-	ret = setup_socket(family, server, port, sock, addr, addr_len);
-	if (ret < 0 || *sock < 0) {
-		return -1;
-	}
-
-	ret = connect(*sock, addr, addr_len);
-	if (ret < 0) {
-		printk("Cannot connect to %s remote (%d)", "IPv4", -errno);
-		ret = -errno;
-	}
-
-	return ret;
-}
 
 int connect_cb(int sock, struct http_request *req, void *user_data)
 {
