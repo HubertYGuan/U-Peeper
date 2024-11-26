@@ -47,13 +47,13 @@ size_t how_much_to_send(size_t max_len)
 	return amount;
 }
 
-ssize_t sendall_with_ws_api(int sock, const void *buf, size_t len)
+ssize_t sendall_ws(int sock, const void *buf, size_t len)
 {
 	return websocket_send_msg(sock, buf, len, WEBSOCKET_OPCODE_DATA_TEXT, true, true,
 				  SYS_FOREVER_MS);
 }
 
-void recv_data_ws_api(int sock, size_t amount, uint8_t *buf, size_t buf_len, const char *proto)
+int recv_data_ws(int sock, size_t amount, uint8_t *buf, size_t buf_len, const char *proto)
 {
 	uint64_t remaining = ULLONG_MAX;
 	int total_read;
@@ -89,8 +89,10 @@ void recv_data_ws_api(int sock, size_t amount, uint8_t *buf, size_t buf_len, con
 			total_read, remaining);
 		LOG_HEXDUMP_DBG(buf, total_read, "received ws buf");
 		LOG_HEXDUMP_DBG(lorem_ipsum, total_read, "sent ws buf");
+		return ret;
 	} else {
 		printk("%s recv %d bytes", proto, total_read);
+		return ret;
 	}
 }
 
@@ -110,7 +112,7 @@ bool send_and_wait_msg(int sock, size_t amount, const char *proto, uint8_t *buf,
 	memcpy(buf, lorem_ipsum, amount);
 	buf[amount] = '\n';
 
-	ret = sendall_with_ws_api(sock, buf, amount + 1);
+	ret = sendall_ws(sock, buf, amount + 1);
 
 	if (ret <= 0) {
 		if (ret < 0) {
@@ -125,7 +127,7 @@ bool send_and_wait_msg(int sock, size_t amount, const char *proto, uint8_t *buf,
 		printk("%s sent %d bytes", proto, ret);
 	}
 
-	recv_data_ws_api(sock, amount + 1, buf, buf_len, proto);
+	recv_data_ws(sock, amount + 1, buf, buf_len, proto);
 
 	count++;
 

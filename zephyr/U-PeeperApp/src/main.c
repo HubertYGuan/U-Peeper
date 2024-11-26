@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2024 Hubert Guan.
  * Copyright (c) 2023 Craig Peacock.
  * Copyright (c) 2017 ARM Ltd.
  * Copyright (c) 2016 Intel Corporation.
@@ -8,10 +9,11 @@
 
 /*
  * Craig Peacock's original code actually doesn't compile on current Zephyr
- * So this is modified to hopefully keep the same functionality while being compilable
+ * So this is modified to keep roughly the same base functionality while being compilable
  */
 
 #include <zephyr/kernel.h>
+#include <zephyr/drivers/gpio.h>
 #include <zephyr/net/net_if.h>
 #include <zephyr/net/wifi_mgmt.h>
 #include <zephyr/net/net_event.h>
@@ -27,6 +29,60 @@ static K_SEM_DEFINE(ipv4_address_obtained, 0, 1);
 
 static struct net_mgmt_event_callback wifi_cb;
 static struct net_mgmt_event_callback ipv4_cb;
+
+static int sock = -1;
+
+static enum CMD_Types {
+	FORWARD,
+	LEFT,
+	RIGHT,
+	BACK
+};
+// May want to refactor to use one node with multiple properties
+#define FORWARD_NODE DT_NODELABEL(forward)
+#define LEFT_NODE    DT_NODELABEL(left)
+#define RIGHT_NODE   DT_NODELABEL(right)
+#define BACK_NODE    DT_NODELABEL(back)
+
+#define ULTRA_NODE DT_NODELABEL(ultra)
+
+// In ms
+#define POLLING_PER 50
+
+static const struct gpio_dt_spec forward = GPIO_DT_SPEC_GET(FORWARD_NODE, gpios);
+static const struct gpio_dt_spec left = GPIO_DT_SPEC_GET(LEFT_NODE, gpios);
+static const struct gpio_dt_spec right = GPIO_DT_SPEC_GET(RIGHT_NODE, gpios);
+static const struct gpio_dt_spec back = GPIO_DT_SPEC_GET(BACK_NODE, gpios);
+
+static const struct gpio_dt_spec ultra = GPIO_DT_SPEC_GET(ULTRA_NODE, gpios);
+
+#define ULTRA_STACK_SIZE 1024 * 8
+#define ULTRA_PRIORITY   -69
+// Setup and poll for ultrasonic sensor input, highest priority thread (I think)
+static void ultra_entry_point(void *p1, void *p2, void *p3)
+{
+	int retgpio = gpio_pin_configure_dt(&ultra, GPIO_INPUT);
+	if (retgpio < 0) {
+		printk("Failed to configure gpio input\n");
+		return;
+	}
+
+	while (true) {
+		if (gpio_pin_get_dt(&ultra)) {
+			// Add ultrasonic event to db
+			int rethttp = HTTPRequest(sock, BACKEND_HOST,
+				    "/events/add?description=Ultrasonic\%20event/", HTTP_POST);
+			if (rethttp < 0)
+			{
+				printk("HTTPRequest failed\n");
+			}
+		}
+		k_sleep(K_MSEC(POLLING_PER));
+	}
+}
+
+K_THREAD_STACK_DEFINE(ultra_stack_area, ULTRA_STACK_SIZE);
+struct k_thread ultra_thread_data;
 
 static void handle_wifi_connect_result(struct net_mgmt_event_callback *cb)
 {
@@ -198,7 +254,7 @@ int connect_and_get_socket(void)
 	PrintAddrInfoResults(&res);
 
 	printk("bConnecting to HTTP Server:\n");
-	sock = ConnectSocket(&res, 8080);
+	sock = ConnectSocket(&res, atof(BACKEND_PORT));
 
 	int httpret = HTTPRequest(sock, BACKEND_HOST, "/", HTTP_GET);
 	if (httpret < 0) {
@@ -224,14 +280,14 @@ int connect_websocket(int sock)
 	memset(&req, 0, sizeof(req));
 
 	req.host = BACKEND_HOST;
-	req.url = "/ws/";
+	req.url = "/mcu/ws/";
 	req.cb = connect_cb;
 	req.tmp_buf = temp_recv_buf_ipv4;
 	req.tmp_buf_len = sizeof(temp_recv_buf_ipv4);
 
 	websock = websocket_connect(sock, &req, timeout, "IPv4");
 	if (websock < 0) {
-		printk("Cannot connect to %s:%d", BACKEND_HOST, 8080);
+		printk("Cannot connect to %s:%s", BACKEND_HOST, BACKEND_PORT);
 		return websock;
 	}
 
@@ -241,12 +297,35 @@ int connect_websocket(int sock)
 
 int main(void)
 {
+	int retforw = gpio_pin_configure_dt(&forward, GPIO_OUTPUT_INACTIVE);
+	if (retforw < 0) {
+		return -1;
+	}
+
+	int retleft = gpio_pin_configure_dt(&left, GPIO_OUTPUT_INACTIVE);
+	if (retleft < 0) {
+		return -1;
+	}
+
+	int retright = gpio_pin_configure_dt(&right, GPIO_OUTPUT_INACTIVE);
+	if (retright < 0) {
+		return -1;
+	}
+
+	int retback = gpio_pin_configure_dt(&back, GPIO_OUTPUT_INACTIVE);
+	if (retback < 0) {
+		return -1;
+	}
 	// NASA would be pissed that I don't have max iterations on these loops
-	int sock = -1;
 	do {
 		k_sleep(K_SECONDS(1));
 		sock = connect_and_get_socket();
 	} while (sock < 0);
+
+	// Start ultrasonic thread
+	k_tid_t ultra_tid = k_thread_create(&ultra_thread_data, ultra_stack_area,
+				    K_THREAD_STACK_SIZEOF(ultra_stack_area), ultra_entry_point,
+				    &sock, NULL, NULL, ULTRA_PRIORITY, 0, K_NO_WAIT);
 
 	int websock = -1;
 	do {
@@ -254,17 +333,41 @@ int main(void)
 		sock = connect_websocket(sock);
 	} while (sock < 0);
 	size_t amount;
-	int retries = 0;
-	while (retries < 10) {
-		printk("Sending Lorem Message");
-		amount = how_much_to_send(ipsum_len);
 
-		if (websock >= 0 && !send_and_wait_msg(websock, amount, "IPv4", recv_buf_ipv4,
-						       sizeof(recv_buf_ipv4))) {
-			break;
+	// Main command receive loop
+	while (true) {
+		uint8_t buf = ~0;
+		int retws = recv_data_ws(websock, 1, &buf, 1, "IPv4");
+		if (retws < 0) {
+			printk("Failed to receive websocket byte\n");
+			return -1;
 		}
 
-		k_sleep(K_MSEC(250));
-		retries++;
+		switch (buf) {
+		case FORWARD:
+			gpio_pin_set_dt(&forward, 1);
+			k_sleep(K_MSEC(100));
+			gpio_pin_set_dt(&forward, 0);
+			break;
+		case LEFT:
+			gpio_pin_set_dt(&left, 1);
+			k_sleep(K_MSEC(100));
+			gpio_pin_set_dt(&left, 0);
+			break;
+		case RIGHT:
+			gpio_pin_set_dt(&right, 1);
+			k_sleep(K_MSEC(100));
+			gpio_pin_set_dt(&right, 0);
+			break;
+		case BACK:
+			gpio_pin_set_dt(&back, 1);
+			k_sleep(K_MSEC(100));
+			gpio_pin_set_dt(&back, 0);
+			break;
+
+		default:
+			printk("Invalid websocket message: %d\n", buf);
+			break;
+		}
 	}
 }

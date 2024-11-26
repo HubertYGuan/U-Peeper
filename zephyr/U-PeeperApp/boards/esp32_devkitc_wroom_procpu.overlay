@@ -7,4 +7,22 @@
 		compatible = "espressif,esp32-wifi";
 		status = "okay";
 	};
+	leds {
+            compatible = "gpio-leds";
+            forward: forward {
+                    gpios = <&gpio0 4 GPIO_ACTIVE_HIGH>;
+            };
+			left: left {
+                    gpios = <&gpio0 0 GPIO_ACTIVE_HIGH>;
+            };
+			right: right {
+                    gpios = <&gpio0 2 GPIO_ACTIVE_HIGH>;
+            };
+			back: back {
+                    gpios = <&gpio0 15 GPIO_ACTIVE_HIGH>;
+            };
+			ultra: ultra {
+                    gpios = <&gpio0 23 GPIO_ACTIVE_HIGH>;
+            };
+    };
 };
