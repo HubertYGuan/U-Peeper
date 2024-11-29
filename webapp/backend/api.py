@@ -8,7 +8,7 @@ from fastapi import (
     WebSocket,
     WebSocketDisconnect,
 )
-from fastapi.responses import StreamingResponse
+from fastapi.responses import HTMLResponse
 from typing import Annotated, Optional
 from fastapi.security import HTTPBearer, HTTPBasicCredentials
 from fastapi.middleware.cors import CORSMiddleware
@@ -154,7 +154,10 @@ async def add_event(
     db: AsyncSession = Depends(Get_DB),
 ):
     event_type_data = await find_event_type(event_type, db)
-    timestamp = datetime.datetime.fromtimestamp(raw_timestamp)
+    
+    timestamp = datetime.datetime.now()
+    if raw_timestamp:
+        timestamp = datetime.datetime.fromtimestamp(raw_timestamp)
 
     results = await db.execute(
         insert(Event).values(
@@ -198,4 +201,3 @@ async def remote_websocket(websocket: WebSocket):
             await manager.send_cmd(cmd)
     except WebSocketDisconnect:
         manager.disconnect(websocket)
-        

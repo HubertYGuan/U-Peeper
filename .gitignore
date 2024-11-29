@@ -12,3 +12,24 @@ zephyr/U-PeeperApp/src/wifi_settings.h
 *__pycache__/
 *supervisord.log
 *supervisord.pid
+
+webapp/frontend/node_modules
+
+# Output
+webapp/frontend/.output
+.vercel
+webapp/frontend/.svelte-kit
+webapp/frontend/build
+
+# OS
+webapp/frontend/.DS_Store
+webapp/frontend/Thumbs.db
+
+# Env
+*.env.*
+!webapp/frontend/.env.example
+!webapp/frontend/.env.test
+
+# Vite
+webapp/frontend/vite.config.js.timestamp-*
+webapp/frontend/vite.config.ts.timestamp-*
