@@ -46,6 +46,7 @@ declare module '$env/static/private' {
 	export const OLDPWD: string;
 	export const TERM_PROGRAM_VERSION: string;
 	export const DESKTOP_SESSION: string;
+	export const npm_package_devDependencies__types_ws: string;
 	export const npm_package_devDependencies_eslint_config_prettier: string;
 	export const npm_package_devDependencies_eslint_plugin_svelte: string;
 	export const GIO_LAUNCHED_DESKTOP_FILE: string;
@@ -54,7 +55,6 @@ declare module '$env/static/private' {
 	export const SDL_IM_MODULE: string;
 	export const VSCODE_GIT_ASKPASS_MAIN: string;
 	export const npm_package_devDependencies_svelte_check: string;
-	export const PS1: string;
 	export const LC_MONETARY: string;
 	export const VSCODE_GIT_ASKPASS_NODE: string;
 	export const npm_package_scripts_check: string;
@@ -73,11 +73,13 @@ declare module '$env/static/private' {
 	export const OWD: string;
 	export const _: string;
 	export const npm_package_scripts_check_watch: string;
+	export const npm_package_devDependencies__sveltejs_adapter_node: string;
 	export const XDG_SESSION_CLASS: string;
 	export const npm_package_scripts_lint: string;
 	export const npm_config_registry: string;
 	export const TERM: string;
 	export const XDG_SESSION_ID: string;
+	export const npm_package_dependencies_ws: string;
 	export const GNOME_DESKTOP_SESSION_ID: string;
 	export const PATH: string;
 	export const SESSION_MANAGER: string;
@@ -97,7 +99,6 @@ declare module '$env/static/private' {
 	export const LANG: string;
 	export const XDG_CURRENT_DESKTOP: string;
 	export const LC_TELEPHONE: string;
-	export const VIRTUAL_ENV_PROMPT: string;
 	export const npm_package_devDependencies_eslint: string;
 	export const XMODIFIERS: string;
 	export const XDG_SESSION_DESKTOP: string;
@@ -111,6 +112,7 @@ declare module '$env/static/private' {
 	export const XDG_GREETER_DATA_DIR: string;
 	export const ORIGINAL_XDG_CURRENT_DESKTOP: string;
 	export const npm_package_devDependencies__sveltejs_kit: string;
+	export const npm_package_dependencies__picocss_pico: string;
 	export const SHELL: string;
 	export const LC_NAME: string;
 	export const ARGV0: string;
@@ -127,7 +129,6 @@ declare module '$env/static/private' {
 	export const GJS_DEBUG_OUTPUT: string;
 	export const LC_IDENTIFICATION: string;
 	export const npm_package_devDependencies_globals: string;
-	export const VIRTUAL_ENV: string;
 	export const VSCODE_GIT_ASKPASS_EXTRA_ARGS: string;
 	export const QT_IM_MODULE: string;
 	export const XDG_VTNR: string;
@@ -198,6 +199,7 @@ declare module '$env/dynamic/private' {
 		OLDPWD: string;
 		TERM_PROGRAM_VERSION: string;
 		DESKTOP_SESSION: string;
+		npm_package_devDependencies__types_ws: string;
 		npm_package_devDependencies_eslint_config_prettier: string;
 		npm_package_devDependencies_eslint_plugin_svelte: string;
 		GIO_LAUNCHED_DESKTOP_FILE: string;
@@ -206,7 +208,6 @@ declare module '$env/dynamic/private' {
 		SDL_IM_MODULE: string;
 		VSCODE_GIT_ASKPASS_MAIN: string;
 		npm_package_devDependencies_svelte_check: string;
-		PS1: string;
 		LC_MONETARY: string;
 		VSCODE_GIT_ASKPASS_NODE: string;
 		npm_package_scripts_check: string;
@@ -225,11 +226,13 @@ declare module '$env/dynamic/private' {
 		OWD: string;
 		_: string;
 		npm_package_scripts_check_watch: string;
+		npm_package_devDependencies__sveltejs_adapter_node: string;
 		XDG_SESSION_CLASS: string;
 		npm_package_scripts_lint: string;
 		npm_config_registry: string;
 		TERM: string;
 		XDG_SESSION_ID: string;
+		npm_package_dependencies_ws: string;
 		GNOME_DESKTOP_SESSION_ID: string;
 		PATH: string;
 		SESSION_MANAGER: string;
@@ -249,7 +252,6 @@ declare module '$env/dynamic/private' {
 		LANG: string;
 		XDG_CURRENT_DESKTOP: string;
 		LC_TELEPHONE: string;
-		VIRTUAL_ENV_PROMPT: string;
 		npm_package_devDependencies_eslint: string;
 		XMODIFIERS: string;
 		XDG_SESSION_DESKTOP: string;
@@ -263,6 +265,7 @@ declare module '$env/dynamic/private' {
 		XDG_GREETER_DATA_DIR: string;
 		ORIGINAL_XDG_CURRENT_DESKTOP: string;
 		npm_package_devDependencies__sveltejs_kit: string;
+		npm_package_dependencies__picocss_pico: string;
 		SHELL: string;
 		LC_NAME: string;
 		ARGV0: string;
@@ -279,7 +282,6 @@ declare module '$env/dynamic/private' {
 		GJS_DEBUG_OUTPUT: string;
 		LC_IDENTIFICATION: string;
 		npm_package_devDependencies_globals: string;
-		VIRTUAL_ENV: string;
 		VSCODE_GIT_ASKPASS_EXTRA_ARGS: string;
 		QT_IM_MODULE: string;
 		XDG_VTNR: string;

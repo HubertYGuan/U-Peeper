@@ -1,10 +1,13 @@
 <script lang="ts">
-    import "$lib/U-Peeper_WS"
-	import type { WebSocket } from "http";
+    import {CMD_Types} from "$lib/U-Peeper_WS.ts";
 
-    let {socket, cmd}: {socket: WebSocket, cmd: 0 | 1 | 2 | 3} = $props();
+    import type { WebSocket } from "ws";
+
+    let {socket, cmd}: {socket: WebSocket, cmd: number} = $props();
 
     let cmd_name = $state("ERROR");
+
+    const stop_cmd = cmd + 4;
     
     switch (cmd) {
         case CMD_Types.FORWARD:
@@ -23,14 +26,67 @@
             break;
     }
 
-    function onclick()
+    let sending: Boolean = false;
+
+    function start()
     {
         const arr = new Uint8Array(1);
         arr[0] = cmd;
         socket.send(arr);
+        console.log("starting button");
+        sending = true;
     }
+
+    function stop()
+    {
+        if (!sending)
+    {
+        return;
+    }
+        sending = false;
+        const arr = new Uint8Array(1);
+        arr[0] = stop_cmd;
+        socket.send(arr);
+        console.log("stopping button");
+    }
+    const buttonClass = (cmd === CMD_Types.FORWARD ? "forward" :
+                                         cmd === CMD_Types.LEFT ? "left" :
+                                         cmd === CMD_Types.RIGHT ? "right" :
+                                         cmd === CMD_Types.BACK ? "back" : "");
 </script>
 
-<button {onclick}>
+<button
+    class={buttonClass}
+    onpointerdown={start}
+    onpointerup={stop}
+    onpointerleave={stop}
+>
     {cmd_name}
 </button>
+
+<style>
+    button {
+        --pico-font-weight: 700;
+        border-left: 20px solid transparent;
+        border-right: 20px solid transparent;
+        border-bottom: 30px solid black; /* Default to pointing down */
+        display: inline-block;
+        touch-action: none;
+    }
+
+    .forward {
+        transform: rotate(0deg);
+    }
+
+    .left {
+        transform: rotate(-90deg);
+    }
+
+    .right {
+        transform: rotate(90deg);
+    }
+
+    .back {
+        transform: rotate(180deg);
+    }
+</style>
