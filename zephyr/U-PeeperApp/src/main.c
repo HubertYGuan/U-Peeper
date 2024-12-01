@@ -36,7 +36,11 @@ static enum CMD_Types {
 	FORWARD,
 	LEFT,
 	RIGHT,
-	BACK
+	BACK,
+	ENDFORWARD,
+	ENDLEFT,
+	ENDRIGHT,
+	ENDBACK
 };
 // May want to refactor to use one node with multiple properties
 #define FORWARD_NODE DT_NODELABEL(forward)
@@ -346,25 +350,28 @@ int main(void)
 		switch (buf) {
 		case FORWARD:
 			gpio_pin_set_dt(&forward, 1);
-			k_sleep(K_MSEC(100));
-			gpio_pin_set_dt(&forward, 0);
 			break;
 		case LEFT:
 			gpio_pin_set_dt(&left, 1);
-			k_sleep(K_MSEC(100));
-			gpio_pin_set_dt(&left, 0);
 			break;
 		case RIGHT:
 			gpio_pin_set_dt(&right, 1);
-			k_sleep(K_MSEC(100));
-			gpio_pin_set_dt(&right, 0);
 			break;
 		case BACK:
 			gpio_pin_set_dt(&back, 1);
-			k_sleep(K_MSEC(100));
+			break;
+		case ENDFORWARD:
+			gpio_pin_set_dt(&forward, 0);
+			break;
+		case ENDLEFT:
+			gpio_pin_set_dt(&left, 0);
+			break;
+		case ENDRIGHT:
+			gpio_pin_set_dt(&right, 0);
+			break;
+		case ENDBACK:
 			gpio_pin_set_dt(&back, 0);
 			break;
-
 		default:
 			printk("Invalid websocket message: %d\n", buf);
 			break;
