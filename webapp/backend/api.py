@@ -187,6 +187,7 @@ async def mcu_websocket(websocket: WebSocket):
     try:
         while True:
             data = await websocket.receive_text()
+            print(f"sending data: {data}")
             await manager.notify_remote(data)
     except WebSocketDisconnect:
         manager.disconnect(websocket)
@@ -198,6 +199,7 @@ async def remote_websocket(websocket: WebSocket):
     try:
         while True:
             cmd = await websocket.receive_bytes()
+            print(f"sending cmd: {cmd}")
             await manager.send_cmd(cmd)
     except WebSocketDisconnect:
         manager.disconnect(websocket)
