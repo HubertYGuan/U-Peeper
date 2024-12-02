@@ -48,13 +48,13 @@ static enum CMD_Types {
 #define RIGHT_NODE   DT_NODELABEL(right)
 #define BACK_NODE    DT_NODELABEL(back)
 
-#define TEST_NODE    DT_NODELABEL(test)
+#define TEST_NODE DT_NODELABEL(test)
 
 #define ULTRA_NODE DT_NODELABEL(ultra)
 
 // In ms
 #define POLLING_PER 50
-#define POST_DELAY 500
+#define POST_DELAY  500
 
 static const struct gpio_dt_spec forward = GPIO_DT_SPEC_GET(FORWARD_NODE, gpios);
 static const struct gpio_dt_spec left = GPIO_DT_SPEC_GET(LEFT_NODE, gpios);
@@ -69,9 +69,11 @@ static const struct gpio_dt_spec ultra = GPIO_DT_SPEC_GET(ULTRA_NODE, gpios);
 #define ULTRA_PRIORITY   -69
 // poll for ultrasonic sensor input, highest priority thread (I think)
 // CURRENTLY NOT USED
+
+/*
 static void ultra_entry_point(void *p1, void *p2, void *p3)
 {
-	
+
 
 	while (true) {
 		if (gpio_pin_get_dt(&ultra)) {
@@ -86,6 +88,7 @@ static void ultra_entry_point(void *p1, void *p2, void *p3)
 		k_sleep(K_MSEC(POLLING_PER));
 	}
 }
+*/
 
 K_THREAD_STACK_DEFINE(ultra_stack_area, ULTRA_STACK_SIZE);
 struct k_thread ultra_thread_data;
@@ -307,32 +310,37 @@ int main(void)
 {
 	int retforw = gpio_pin_configure_dt(&forward, GPIO_OUTPUT_INACTIVE);
 	if (retforw < 0) {
+		sys_reboot(SYS_REBOOT_WARM);
 		return -1;
 	}
 
 	int retleft = gpio_pin_configure_dt(&left, GPIO_OUTPUT_INACTIVE);
 	if (retleft < 0) {
+		sys_reboot(SYS_REBOOT_WARM);
 		return -1;
 	}
 
 	int retright = gpio_pin_configure_dt(&right, GPIO_OUTPUT_INACTIVE);
 	if (retright < 0) {
+		sys_reboot(SYS_REBOOT_WARM);
 		return -1;
 	}
 
 	int retback = gpio_pin_configure_dt(&back, GPIO_OUTPUT_INACTIVE);
 	if (retback < 0) {
+		sys_reboot(SYS_REBOOT_WARM);
 		return -1;
 	}
 
 	int rettest = gpio_pin_configure_dt(&test, GPIO_OUTPUT_INACTIVE);
 	if (rettest < 0) {
+		sys_reboot(SYS_REBOOT_WARM);
 		return -1;
 	}
 	gpio_pin_set_dt(&test, 0);
 	int retultra = gpio_pin_configure_dt(&ultra, GPIO_INPUT);
 	if (retultra < 0) {
-		printk("Failed to configure gpio input\n");
+		sys_reboot(SYS_REBOOT_WARM);
 		return -1;
 	}
 	// NASA would be pissed that I don't have max iterations on these loops
@@ -342,8 +350,7 @@ int main(void)
 	} while (sock < 0);
 
 	int websock = -1;
-	while (websock < 0)
-	{
+	while (websock < 0) {
 		k_sleep(K_SECONDS(1));
 		websock = connect_websocket(sock);
 	};
@@ -355,6 +362,7 @@ int main(void)
 		int retws = recv_data_ws(websock, 1, &buf, 1, "IPv4");
 		if (retws < 0) {
 			printk("Failed to receive websocket byte\n");
+			sys_reboot(SYS_REBOOT_WARM);
 			return -1;
 		}
 
@@ -392,15 +400,13 @@ int main(void)
 		if (gpio_pin_get_dt(&ultra)) {
 			// Add ultrasonic event to db
 			int rethttp = HTTPRequest(sock, BACKEND_HOST,
-				    "/events/add?description=Ultrasonic\%20event/", HTTP_POST);
-			if (rethttp < 0)
-			{
+						  "/events/add?description=Ultrasonic\%20event/",
+						  HTTP_POST);
+			if (rethttp < 0) {
 				printk("HTTPRequest failed\n");
-			}
-			else
-			{
+			} else {
 				// TODO
-				//k_timer_start
+				// k_timer_start
 			}
 		}
 	}

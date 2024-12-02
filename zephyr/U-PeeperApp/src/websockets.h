@@ -31,7 +31,7 @@ uint8_t temp_recv_buf_ipv4[MAX_RECV_BUF_LEN + EXTRA_BUF_SPACE];
 
 int connect_cb(int sock, struct http_request *req, void *user_data)
 {
-    printk("Websocket %d for %s connected.", sock, (char *)user_data);
+	printk("Websocket %d for %s connected.", sock, (char *)user_data);
 
 	return 0;
 }
@@ -60,6 +60,7 @@ int recv_data_ws(int sock, size_t amount, uint8_t *buf, size_t buf_len, const ch
 	uint32_t message_type;
 	int ret, read_pos;
 
+	ret = -1;
 	read_pos = 0;
 	total_read = 0;
 
@@ -73,8 +74,8 @@ int recv_data_ws(int sock, size_t amount, uint8_t *buf, size_t buf_len, const ch
 			}
 
 			printk("%s connection closed while "
-				"waiting (%d/%d)",
-				proto, ret, errno);
+			       "waiting (%d/%d)",
+			       proto, ret, errno);
 			break;
 		}
 
@@ -86,7 +87,7 @@ int recv_data_ws(int sock, size_t amount, uint8_t *buf, size_t buf_len, const ch
 	    /* Do not check the final \n at the end of the msg */
 	    memcmp(lorem_ipsum, buf, amount - 1) != 0) {
 		printk("%s data recv failure %zd/%d bytes (remaining %" PRId64 ")", proto, amount,
-			total_read, remaining);
+		       total_read, remaining);
 		LOG_HEXDUMP_DBG(buf, total_read, "received ws buf");
 		LOG_HEXDUMP_DBG(lorem_ipsum, total_read, "sent ws buf");
 		return ret;
@@ -117,7 +118,7 @@ bool send_and_wait_msg(int sock, size_t amount, const char *proto, uint8_t *buf,
 	if (ret <= 0) {
 		if (ret < 0) {
 			printk("%s failed to send data using %s (%d)", proto,
-				(count % 2) ? "ws API" : "socket API", ret);
+			       (count % 2) ? "ws API" : "socket API", ret);
 		} else {
 			printk("%s connection closed", proto);
 		}
