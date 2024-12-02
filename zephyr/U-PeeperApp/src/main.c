@@ -21,7 +21,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include "websockets.h"
-#include "ping.h"
 #include "http_requests.h"
 
 static K_SEM_DEFINE(wifi_connected, 0, 1);
