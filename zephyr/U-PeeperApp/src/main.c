@@ -20,6 +20,7 @@
 #include <errno.h>
 #include <stdlib.h>
 #include <string.h>
+#include <zephyr/sys/reboot.h>
 #include "websockets.h"
 #include "http_requests.h"
 
@@ -47,28 +48,30 @@ static enum CMD_Types {
 #define RIGHT_NODE   DT_NODELABEL(right)
 #define BACK_NODE    DT_NODELABEL(back)
 
+#define TEST_NODE    DT_NODELABEL(test)
+
 #define ULTRA_NODE DT_NODELABEL(ultra)
 
 // In ms
 #define POLLING_PER 50
+#define POST_DELAY 500
 
 static const struct gpio_dt_spec forward = GPIO_DT_SPEC_GET(FORWARD_NODE, gpios);
 static const struct gpio_dt_spec left = GPIO_DT_SPEC_GET(LEFT_NODE, gpios);
 static const struct gpio_dt_spec right = GPIO_DT_SPEC_GET(RIGHT_NODE, gpios);
 static const struct gpio_dt_spec back = GPIO_DT_SPEC_GET(BACK_NODE, gpios);
 
+static const struct gpio_dt_spec test = GPIO_DT_SPEC_GET(TEST_NODE, gpios);
+
 static const struct gpio_dt_spec ultra = GPIO_DT_SPEC_GET(ULTRA_NODE, gpios);
 
 #define ULTRA_STACK_SIZE 1024 * 8
 #define ULTRA_PRIORITY   -69
-// Setup and poll for ultrasonic sensor input, highest priority thread (I think)
+// poll for ultrasonic sensor input, highest priority thread (I think)
+// CURRENTLY NOT USED
 static void ultra_entry_point(void *p1, void *p2, void *p3)
 {
-	int retgpio = gpio_pin_configure_dt(&ultra, GPIO_INPUT);
-	if (retgpio < 0) {
-		printk("Failed to configure gpio input\n");
-		return;
-	}
+	
 
 	while (true) {
 		if (gpio_pin_get_dt(&ultra)) {
@@ -105,8 +108,10 @@ static void handle_wifi_disconnect_result(struct net_mgmt_event_callback *cb)
 
 	if (status->status) {
 		printk("Disconnection request (%d)\n", status->status);
+		sys_reboot(SYS_REBOOT_WARM);
 	} else {
 		printk("Disconnected\n");
+		sys_reboot(SYS_REBOOT_WARM);
 	}
 }
 
@@ -319,23 +324,30 @@ int main(void)
 	if (retback < 0) {
 		return -1;
 	}
+
+	int rettest = gpio_pin_configure_dt(&test, GPIO_OUTPUT_INACTIVE);
+	if (rettest < 0) {
+		return -1;
+	}
+	gpio_pin_set_dt(&test, 0);
+	int retultra = gpio_pin_configure_dt(&ultra, GPIO_INPUT);
+	if (retultra < 0) {
+		printk("Failed to configure gpio input\n");
+		return -1;
+	}
 	// NASA would be pissed that I don't have max iterations on these loops
 	do {
-		k_sleep(K_SECONDS(1));
+		k_sleep(K_MSEC(100));
 		sock = connect_and_get_socket();
 	} while (sock < 0);
 
-	// Start ultrasonic thread
-	k_tid_t ultra_tid = k_thread_create(&ultra_thread_data, ultra_stack_area,
-				    K_THREAD_STACK_SIZEOF(ultra_stack_area), ultra_entry_point,
-				    &sock, NULL, NULL, ULTRA_PRIORITY, 0, K_NO_WAIT);
-
 	int websock = -1;
-	do {
+	while (websock < 0)
+	{
 		k_sleep(K_SECONDS(1));
-		sock = connect_websocket(sock);
-	} while (sock < 0);
-	size_t amount;
+		websock = connect_websocket(sock);
+	};
+	gpio_pin_set_dt(&test, 1);
 
 	// Main command receive loop
 	while (true) {
@@ -345,6 +357,8 @@ int main(void)
 			printk("Failed to receive websocket byte\n");
 			return -1;
 		}
+
+		printk("\nReceived byte: %d", buf);
 
 		switch (buf) {
 		case FORWARD:
@@ -374,6 +388,20 @@ int main(void)
 		default:
 			printk("Invalid websocket message: %d\n", buf);
 			break;
+		}
+		if (gpio_pin_get_dt(&ultra)) {
+			// Add ultrasonic event to db
+			int rethttp = HTTPRequest(sock, BACKEND_HOST,
+				    "/events/add?description=Ultrasonic\%20event/", HTTP_POST);
+			if (rethttp < 0)
+			{
+				printk("HTTPRequest failed\n");
+			}
+			else
+			{
+				// TODO
+				//k_timer_start
+			}
 		}
 	}
 }

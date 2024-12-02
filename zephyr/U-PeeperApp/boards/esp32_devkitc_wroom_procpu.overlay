@@ -21,6 +21,9 @@
 			back: back {
                     gpios = <&gpio0 15 GPIO_ACTIVE_HIGH>;
             };
+                        test: test {
+                    gpios = <&gpio0 12 GPIO_ACTIVE_HIGH>;
+            };
 			ultra: ultra {
                     gpios = <&gpio0 23 GPIO_ACTIVE_HIGH>;
             };
