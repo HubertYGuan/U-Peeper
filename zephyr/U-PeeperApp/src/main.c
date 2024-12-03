@@ -98,6 +98,7 @@ static void handle_wifi_connect_result(struct net_mgmt_event_callback *cb)
 
 	if (status->status) {
 		printk("Connection request failed (%d)\n", status->status);
+		sys_reboot(SYS_REBOOT_WARM);
 	} else {
 		printk("Connected\n");
 		k_sem_give(&wifi_connected);
@@ -261,11 +262,11 @@ int connect_and_get_socket(void)
 		return 0;
 	}
 
-	/* Removed for efficient rebooting
-	PrintAddrInfoResults(&res);
-
 	printk("bConnecting to HTTP Server:\n");
 	sock = ConnectSocket(&res, atof(BACKEND_PORT));
+
+	/* Removed for efficient rebooting
+	PrintAddrInfoResults(&res);
 
 	int httpret = HTTPRequest(sock, BACKEND_HOST, "/", HTTP_GET);
 	if (httpret < 0) {
