@@ -9,7 +9,7 @@
 
 	let sock: WS;
 	onMount(() => {
-		// Replace port 8080 with the port of the backend
+		// Replace port 8080 and localhost with the port and host of the backend
 		try {
 			sock = new WebSocket('ws://localhost:8080/remote/ws/');
 

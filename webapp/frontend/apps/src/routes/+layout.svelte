@@ -1,5 +1,5 @@
 <script>
-    import '@picocss/pico/css/pico.css'
+	import '@picocss/pico/css/pico.css';
 	let { children } = $props();
 </script>
 

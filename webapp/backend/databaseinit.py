@@ -1,5 +1,3 @@
-from sqlalchemy import Column, MetaData, select, String, Table, create_engine, insert
-from sqlalchemy.orm import Session
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
 
 from db_models.db_models import DB_Base, Event_Type, Event
@@ -36,6 +34,7 @@ async def Create_Tables():
     async with DB_engine.begin() as conn:
         await conn.run_sync(DB_Base.metadata.create_all)
 
+
 # TODO: Change this to insert the actual default event_types (tbd) (and possibly an init event)
 async def Insert_Default():
     session = DB_Session()
@@ -47,7 +46,7 @@ async def Insert_Default():
                 raw_timestamp=datetime.now().timestamp(),
                 description="Test Event",
             ),
-        ]
+        ],
     )
     session.add_all([turn_on])
     await session.commit()

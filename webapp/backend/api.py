@@ -1,47 +1,41 @@
 from fastapi import (
     FastAPI,
-    HTTPException,
     Depends,
-    Response,
-    Request,
-    status,
     WebSocket,
     WebSocketDisconnect,
 )
-from fastapi.responses import HTMLResponse
-from typing import Annotated, Optional
-from fastapi.security import HTTPBearer, HTTPBasicCredentials
-from fastapi.middleware.cors import CORSMiddleware
-from starlette.middleware.base import BaseHTTPMiddleware
-from pydantic import BaseModel
 from sqlalchemy import select, update, delete, insert
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 from db_models.db_models import Event, Event_Type
 from databaseinit import Get_DB
 import datetime
-from dotenv import load_dotenv
-import os
 from enum import Enum
+
 
 class WS_Type(Enum):
     MCU = 0
     REMOTE = 1
+
 
 class CMD_Type(Enum):
     FORWARD = 0
     LEFT = 1
     RIGHT = 2
     BACK = 3
-class U_WebSocket():    
+
+
+class U_WebSocket:
     def __init__(self, websocket: WebSocket, ws_type: int):
         self.websocket = websocket
         self.ws_type = ws_type
-        
+
+
 # Currently only support for one mcu websocket (but it technically sends cmds to all at once)
-class WS_Manager():
+class WS_Manager:
     def __init__(self):
         self.active_connections: list[U_WebSocket] = []
+
     async def connect(self, websocket: WebSocket, ws_type: int):
         U_websocket = U_WebSocket(websocket, ws_type)
         self.active_connections.append(U_websocket)
@@ -50,21 +44,25 @@ class WS_Manager():
         for ele in self.active_connections:
             if ele.websocket.__repr__() == websocket.__repr__:
                 self.active_connections.remove(ele)
+
     async def send_cmd(self, cmd):
         for ele in self.active_connections:
             if ele.ws_type == WS_Type.MCU:
                 print(f"manager sending {cmd}")
                 data = bytes(cmd)
                 await ele.websocket.send_bytes(data)
+
     async def notify_remote(self, data: str):
         for ele in self.active_connections:
             if ele.ws_type == WS_Type.REMOTE:
                 await ele.websocket.send_text(data)
-                
+
+
 app = FastAPI()
 
 # singleton for managing all current WebSocket Connections
 manager = WS_Manager()
+
 
 async def find_event_type(event_type: str, db: AsyncSession):
     results = await db.execute(
@@ -155,7 +153,7 @@ async def add_event(
     db: AsyncSession = Depends(Get_DB),
 ):
     event_type_data = await find_event_type(event_type, db)
-    
+
     timestamp = datetime.datetime.now()
     if raw_timestamp:
         timestamp = datetime.datetime.fromtimestamp(raw_timestamp)
@@ -185,7 +183,7 @@ async def delete_event(rowid: int, db: AsyncSession = Depends(Get_DB)):
 async def mcu_websocket(websocket: WebSocket):
     await websocket.accept()
     await manager.connect(websocket, WS_Type.MCU)
-    
+
     try:
         while True:
             data = await websocket.receive_text()
@@ -193,6 +191,7 @@ async def mcu_websocket(websocket: WebSocket):
             await manager.notify_remote(data)
     except WebSocketDisconnect:
         manager.disconnect(websocket)
+
 
 @app.websocket("/remote/ws/")
 async def remote_websocket(websocket: WebSocket):
