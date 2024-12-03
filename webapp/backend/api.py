@@ -19,7 +19,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 from db_models.db_models import Event, Event_Type
 from databaseinit import Get_DB
-import time
 import datetime
 from dotenv import load_dotenv
 import os
@@ -51,10 +50,12 @@ class WS_Manager():
         for ele in self.active_connections:
             if ele.websocket.__repr__() == websocket.__repr__:
                 self.active_connections.remove(ele)
-    async def send_cmd(self, cmd: int):
+    async def send_cmd(self, cmd):
         for ele in self.active_connections:
             if ele.ws_type == WS_Type.MCU:
-                await ele.websocket.send_bytes(cmd)
+                print(f"manager sending {cmd}")
+                data = bytes(cmd)
+                await ele.websocket.send_bytes(data)
     async def notify_remote(self, data: str):
         for ele in self.active_connections:
             if ele.ws_type == WS_Type.REMOTE:
@@ -184,6 +185,7 @@ async def delete_event(rowid: int, db: AsyncSession = Depends(Get_DB)):
 async def mcu_websocket(websocket: WebSocket):
     await websocket.accept()
     await manager.connect(websocket, WS_Type.MCU)
+    
     try:
         while True:
             data = await websocket.receive_text()
