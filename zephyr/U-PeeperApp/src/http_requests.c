@@ -61,7 +61,7 @@ int ConnectSocket(struct zsock_addrinfo **results, uint16_t port)
 static void http_response_cb(struct http_response *rsp, enum http_final_call final_data,
 			     void *user_data)
 {
-	// Might need to store the data in heap idk but heap bad
+	// Can allocate heap memory to store http get reqs, however only post is used right now
 	printk("HTTP Response Callback: %.*s", rsp->data_len, rsp->recv_buf);
 }
 

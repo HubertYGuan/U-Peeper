@@ -14,13 +14,7 @@ LOG_MODULE_REGISTER(net_websocket_client_sample, LOG_LEVEL_DBG);
 
 #define SERVER_ADDR4 BACKEND_HOST
 
-static const char lorem_ipsum[] = LOREM_IPSUM;
-
-#define MAX_RECV_BUF_LEN (sizeof(lorem_ipsum) - 1)
-
-const int ipsum_len = MAX_RECV_BUF_LEN;
-
-uint8_t recv_buf_ipv4[MAX_RECV_BUF_LEN];
+#define MAX_RECV_BUF_LEN 696
 
 /* We need to allocate bigger buffer for the websocket data we receive so that
  * the websocket header fits into it.
@@ -83,56 +77,7 @@ int recv_data_ws(int sock, size_t amount, uint8_t *buf, size_t buf_len, const ch
 		total_read += ret;
 	}
 
-	if (remaining != 0 || total_read != amount ||
-	    /* Do not check the final \n at the end of the msg */
-	    memcmp(lorem_ipsum, buf, amount - 1) != 0) {
-		printk("%s data recv failure %zd/%d bytes (remaining %" PRId64 ")", proto, amount,
-		       total_read, remaining);
-		LOG_HEXDUMP_DBG(buf, total_read, "received ws buf");
-		LOG_HEXDUMP_DBG(lorem_ipsum, total_read, "sent ws buf");
-		return ret;
-	} else {
-		printk("%s recv %d bytes", proto, total_read);
-		return ret;
-	}
-}
-
-bool send_and_wait_msg(int sock, size_t amount, const char *proto, uint8_t *buf, size_t buf_len)
-{
-	static int count;
-	int ret;
-
-	if (sock < 0) {
-		return true;
-	}
-
-	/* Terminate the sent data with \n so that we can use the
-	 *      websocketd --port=9001 cat
-	 * command in server side.
-	 */
-	memcpy(buf, lorem_ipsum, amount);
-	buf[amount] = '\n';
-
-	ret = sendall_ws(sock, buf, amount + 1);
-
-	if (ret <= 0) {
-		if (ret < 0) {
-			printk("%s failed to send data using %s (%d)", proto,
-			       (count % 2) ? "ws API" : "socket API", ret);
-		} else {
-			printk("%s connection closed", proto);
-		}
-
-		return false;
-	} else {
-		printk("%s sent %d bytes", proto, ret);
-	}
-
-	recv_data_ws(sock, amount + 1, buf, buf_len, proto);
-
-	count++;
-
-	return true;
+	return ret;
 }
 
 #endif // !WEBSOCKETS_H

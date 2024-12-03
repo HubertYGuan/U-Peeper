@@ -405,7 +405,7 @@ int main(void)
 			if (rethttp < 0) {
 				printk("HTTPRequest failed\n");
 			} else {
-				// TODO
+				// TODO: timer delay for post requests
 				// k_timer_start
 			}
 		}
