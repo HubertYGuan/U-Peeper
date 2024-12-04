@@ -60,9 +60,7 @@ You can use npm or pnpm as a package manager (I'll use pnpm). Also make sure you
 
 Install the dependencies:
 ```
-cd webapp/frontend/
-pnpm it
-cd apps/
+cd webapp/frontend/apps/
 pnpm it
 ```
 Note: from my experience `pnpm i` will not actually install the dependencies for some reason.

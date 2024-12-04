@@ -54,7 +54,7 @@ static enum CMD_Types {
 
 // In ms
 #define POLLING_PER 50
-#define POST_DELAY  500
+// #define POST_DELAY  500
 
 static const struct gpio_dt_spec forward = GPIO_DT_SPEC_GET(FORWARD_NODE, gpios);
 static const struct gpio_dt_spec left = GPIO_DT_SPEC_GET(LEFT_NODE, gpios);
@@ -88,10 +88,9 @@ static void ultra_entry_point(void *p1, void *p2, void *p3)
 		k_sleep(K_MSEC(POLLING_PER));
 	}
 }
-*/
-
 K_THREAD_STACK_DEFINE(ultra_stack_area, ULTRA_STACK_SIZE);
 struct k_thread ultra_thread_data;
+*/
 
 static void handle_wifi_connect_result(struct net_mgmt_event_callback *cb)
 {
@@ -99,6 +98,7 @@ static void handle_wifi_connect_result(struct net_mgmt_event_callback *cb)
 
 	if (status->status) {
 		printk("Connection request failed (%d)\n", status->status);
+		sys_reboot(SYS_REBOOT_WARM);
 	} else {
 		printk("Connected\n");
 		k_sem_give(&wifi_connected);
@@ -256,16 +256,17 @@ int connect_and_get_socket(void)
 	if (st) {
 		printf("Unable to resolve address, quitting\n");
 
-		k_sleep(K_SECONDS(5));
+		// k_sleep(K_SECONDS(5));
 		wifi_disconnect();
 		// Error codes aren't really supported right now
 		return 0;
 	}
 
-	PrintAddrInfoResults(&res);
-
 	printk("bConnecting to HTTP Server:\n");
 	sock = ConnectSocket(&res, atof(BACKEND_PORT));
+
+	/* Removed for efficient rebooting
+	PrintAddrInfoResults(&res);
 
 	int httpret = HTTPRequest(sock, BACKEND_HOST, "/", HTTP_GET);
 	if (httpret < 0) {
@@ -274,6 +275,7 @@ int connect_and_get_socket(void)
 		wifi_disconnect();
 		return -1;
 	}
+	*/
 	return sock;
 }
 
@@ -306,6 +308,10 @@ int connect_websocket(int sock)
 	return websock;
 }
 
+/*
+ * Continuously tries to connect to U-Peeper open wifi network, then to the backend host, and
+ * finally to the mcu WebSocket endpoint. The OS reboots upon disconnection or another failure.
+*/
 int main(void)
 {
 	int retforw = gpio_pin_configure_dt(&forward, GPIO_OUTPUT_INACTIVE);
@@ -345,13 +351,13 @@ int main(void)
 	}
 	// NASA would be pissed that I don't have max iterations on these loops
 	do {
-		k_sleep(K_MSEC(100));
+		// k_sleep(K_MSEC(100));
 		sock = connect_and_get_socket();
 	} while (sock < 0);
 
 	int websock = -1;
 	while (websock < 0) {
-		k_sleep(K_SECONDS(1));
+		// k_sleep(K_SECONDS(1));
 		websock = connect_websocket(sock);
 	};
 	gpio_pin_set_dt(&test, 1);

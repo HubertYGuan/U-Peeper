@@ -13,7 +13,8 @@ zephyr/U-PeeperApp/src/wifi_settings.h
 *supervisord.log
 *supervisord.pid
 
-webapp/frontend/node_modules
+*node_modules/
+*.svelte-kit/
 
 # Output
 webapp/frontend/.output
