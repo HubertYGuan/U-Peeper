@@ -25,6 +25,7 @@ Make sure that you clone the Zephyr repository into `zephyr`, set up a `.venv`, 
 pip install -r zephyr/scripts/requirements.txt
 west init -l zephyr
 west update
+west blobs fetch hal_espressif
 ```
 
 Make sure that you configure a `wifi_settings.h` file in `zephyr/U-PeeperApp/src` with `#define` statements for `SSID`, `BACKEND_HOST`, `BACKEND_PORT`
