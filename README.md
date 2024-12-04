@@ -25,6 +25,8 @@ Make sure that you clone the Zephyr repository into `zephyr`, set up a `.venv`, 
 pip install -r zephyr/scripts/requirements.txt
 west init -l zephyr
 west update
+west sdk install
+west blobs fetch hal_espressif
 ```
 
 Make sure that you configure a `wifi_settings.h` file in `zephyr/U-PeeperApp/src` with `#define` statements for `SSID`, `BACKEND_HOST`, `BACKEND_PORT`
@@ -32,7 +34,7 @@ Make sure that you configure a `wifi_settings.h` file in `zephyr/U-PeeperApp/src
 Run this to build the application:
 ```
 cd zephyr
-west build -p always -b esp32_devkitc_wroom U-PeeperApp
+west build -p always -b esp32_devkitc_wroom/esp32/procpu U-PeeperApp
 ```
 
 You can then flash and monitor your build:
