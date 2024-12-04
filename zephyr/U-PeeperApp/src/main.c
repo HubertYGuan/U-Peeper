@@ -98,7 +98,7 @@ static void handle_wifi_connect_result(struct net_mgmt_event_callback *cb)
 
 	if (status->status) {
 		printk("Connection request failed (%d)\n", status->status);
-		sys_reboot(SYS_REBOOT_WARM);
+		//sys_reboot(SYS_REBOOT_WARM);
 	} else {
 		printk("Connected\n");
 		k_sem_give(&wifi_connected);
@@ -111,10 +111,10 @@ static void handle_wifi_disconnect_result(struct net_mgmt_event_callback *cb)
 
 	if (status->status) {
 		printk("Disconnection request (%d)\n", status->status);
-		sys_reboot(SYS_REBOOT_WARM);
+		//sys_reboot(SYS_REBOOT_WARM);
 	} else {
 		printk("Disconnected\n");
-		sys_reboot(SYS_REBOOT_WARM);
+		//sys_reboot(SYS_REBOOT_WARM);
 	}
 }
 
@@ -316,37 +316,37 @@ int main(void)
 {
 	int retforw = gpio_pin_configure_dt(&forward, GPIO_OUTPUT_INACTIVE);
 	if (retforw < 0) {
-		sys_reboot(SYS_REBOOT_WARM);
+		//sys_reboot(SYS_REBOOT_WARM);
 		return -1;
 	}
 
 	int retleft = gpio_pin_configure_dt(&left, GPIO_OUTPUT_INACTIVE);
 	if (retleft < 0) {
-		sys_reboot(SYS_REBOOT_WARM);
+		//sys_reboot(SYS_REBOOT_WARM);
 		return -1;
 	}
 
 	int retright = gpio_pin_configure_dt(&right, GPIO_OUTPUT_INACTIVE);
 	if (retright < 0) {
-		sys_reboot(SYS_REBOOT_WARM);
+		//sys_reboot(SYS_REBOOT_WARM);
 		return -1;
 	}
 
 	int retback = gpio_pin_configure_dt(&back, GPIO_OUTPUT_INACTIVE);
 	if (retback < 0) {
-		sys_reboot(SYS_REBOOT_WARM);
+		//sys_reboot(SYS_REBOOT_WARM);
 		return -1;
 	}
 
 	int rettest = gpio_pin_configure_dt(&test, GPIO_OUTPUT_INACTIVE);
 	if (rettest < 0) {
-		sys_reboot(SYS_REBOOT_WARM);
+		//sys_reboot(SYS_REBOOT_WARM);
 		return -1;
 	}
 	gpio_pin_set_dt(&test, 0);
 	int retultra = gpio_pin_configure_dt(&ultra, GPIO_INPUT);
 	if (retultra < 0) {
-		sys_reboot(SYS_REBOOT_WARM);
+		//sys_reboot(SYS_REBOOT_WARM);
 		return -1;
 	}
 	// NASA would be pissed that I don't have max iterations on these loops
@@ -368,7 +368,7 @@ int main(void)
 		int retws = recv_data_ws(websock, 1, &buf, 1, "IPv4");
 		if (retws < 0) {
 			printk("Failed to receive websocket byte\n");
-			sys_reboot(SYS_REBOOT_WARM);
+			//sys_reboot(SYS_REBOOT_WARM);
 			return -1;
 		}
 
