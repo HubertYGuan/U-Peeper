@@ -68,7 +68,7 @@ static const struct gpio_dt_spec ultra = GPIO_DT_SPEC_GET(ULTRA_NODE, gpios);
 #define ULTRA_STACK_SIZE 1024 * 8
 #define ULTRA_PRIORITY   -69
 // poll for ultrasonic sensor input, highest priority thread (I think)
-// CURRENTLY NOT USED
+// TODO make this be executed on a separate core so that it doesn't block websockets
 
 /*
 static void ultra_entry_point(void *p1, void *p2, void *p3)
@@ -98,7 +98,7 @@ static void handle_wifi_connect_result(struct net_mgmt_event_callback *cb)
 
 	if (status->status) {
 		printk("Connection request failed (%d)\n", status->status);
-		//sys_reboot(SYS_REBOOT_WARM);
+		sys_reboot(SYS_REBOOT_WARM);
 	} else {
 		printk("Connected\n");
 		k_sem_give(&wifi_connected);
@@ -111,10 +111,10 @@ static void handle_wifi_disconnect_result(struct net_mgmt_event_callback *cb)
 
 	if (status->status) {
 		printk("Disconnection request (%d)\n", status->status);
-		//sys_reboot(SYS_REBOOT_WARM);
+		sys_reboot(SYS_REBOOT_WARM);
 	} else {
 		printk("Disconnected\n");
-		//sys_reboot(SYS_REBOOT_WARM);
+		sys_reboot(SYS_REBOOT_WARM);
 	}
 }
 
@@ -185,6 +185,7 @@ void wifi_connect(void)
 	if (net_mgmt(NET_REQUEST_WIFI_CONNECT, iface, &wifi_params,
 		     sizeof(struct wifi_connect_req_params))) {
 		printk("WiFi Connection Request Failed\n");
+		sys_reboot(SYS_REBOOT_WARM);
 	} else {
 		printk("Connected successfully\n");
 	}
@@ -311,42 +312,42 @@ int connect_websocket(int sock)
 /*
  * Continuously tries to connect to U-Peeper open wifi network, then to the backend host, and
  * finally to the mcu WebSocket endpoint. The OS reboots upon disconnection or another failure.
-*/
+ */
 int main(void)
 {
 	int retforw = gpio_pin_configure_dt(&forward, GPIO_OUTPUT_INACTIVE);
 	if (retforw < 0) {
-		//sys_reboot(SYS_REBOOT_WARM);
+		sys_reboot(SYS_REBOOT_WARM);
 		return -1;
 	}
 
 	int retleft = gpio_pin_configure_dt(&left, GPIO_OUTPUT_INACTIVE);
 	if (retleft < 0) {
-		//sys_reboot(SYS_REBOOT_WARM);
+		sys_reboot(SYS_REBOOT_WARM);
 		return -1;
 	}
 
 	int retright = gpio_pin_configure_dt(&right, GPIO_OUTPUT_INACTIVE);
 	if (retright < 0) {
-		//sys_reboot(SYS_REBOOT_WARM);
+		sys_reboot(SYS_REBOOT_WARM);
 		return -1;
 	}
 
 	int retback = gpio_pin_configure_dt(&back, GPIO_OUTPUT_INACTIVE);
 	if (retback < 0) {
-		//sys_reboot(SYS_REBOOT_WARM);
+		sys_reboot(SYS_REBOOT_WARM);
 		return -1;
 	}
 
 	int rettest = gpio_pin_configure_dt(&test, GPIO_OUTPUT_INACTIVE);
 	if (rettest < 0) {
-		//sys_reboot(SYS_REBOOT_WARM);
+		sys_reboot(SYS_REBOOT_WARM);
 		return -1;
 	}
 	gpio_pin_set_dt(&test, 0);
 	int retultra = gpio_pin_configure_dt(&ultra, GPIO_INPUT);
 	if (retultra < 0) {
-		//sys_reboot(SYS_REBOOT_WARM);
+		sys_reboot(SYS_REBOOT_WARM);
 		return -1;
 	}
 	// NASA would be pissed that I don't have max iterations on these loops
@@ -368,7 +369,7 @@ int main(void)
 		int retws = recv_data_ws(websock, 1, &buf, 1, "IPv4");
 		if (retws < 0) {
 			printk("Failed to receive websocket byte\n");
-			//sys_reboot(SYS_REBOOT_WARM);
+			sys_reboot(SYS_REBOOT_WARM);
 			return -1;
 		}
 
@@ -402,18 +403,6 @@ int main(void)
 		default:
 			printk("Invalid websocket message: %d\n", buf);
 			break;
-		}
-		if (gpio_pin_get_dt(&ultra)) {
-			// Add ultrasonic event to db
-			int rethttp = HTTPRequest(sock, BACKEND_HOST,
-						  "/events/add?description=Ultrasonic\%20event/",
-						  HTTP_POST);
-			if (rethttp < 0) {
-				printk("HTTPRequest failed\n");
-			} else {
-				// TODO: timer delay for post requests
-				// k_timer_start
-			}
 		}
 	}
 }
