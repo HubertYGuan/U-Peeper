@@ -42,7 +42,8 @@ class WS_Manager:
 
     def disconnect(self, websocket: WebSocket):
         for ele in self.active_connections:
-            if ele.websocket.__repr__() == websocket.__repr__:
+            if ele.websocket == websocket:
+                print("removed websock connection in manager")
                 self.active_connections.remove(ele)
 
     async def send_cmd(self, cmd):
