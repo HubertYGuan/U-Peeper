@@ -2,6 +2,7 @@
 	import './Remote_Button.svelte';
 	import '$lib/U-Peeper_WS.ts';
 	import RemoteButton from './Remote_Button.svelte';
+	import TestButton from './Test_Button.svelte';
 	import { WebSocket as WS } from 'ws';
     import type { MessageEvent } from 'ws';
 	import { CMD_Types } from '$lib/U-Peeper_WS.ts';
@@ -11,7 +12,7 @@
 	onMount(() => {
 		// Replace port 8080 and localhost with the port and host of the backend
 		try {
-			sock = new WebSocket('ws://localhost:8080/remote/ws/');
+			sock = new WebSocket('ws://10.42.0.1:8080/remote/ws/');
 
 			sock.addEventListener('open', () => {
 				console.log('Opened');
@@ -52,6 +53,8 @@
 		<RemoteButton socket={sock} cmd={CMD_Types.BACK} />
 	</div>
 </div>
+
+<TestButton></TestButton>
 
 <style>
 	.grid {

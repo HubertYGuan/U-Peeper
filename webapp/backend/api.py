@@ -118,28 +118,47 @@ async def read_event_type(rowid: int, db: AsyncSession = Depends(Get_DB)):
     events_types_list = results.scalars().first()
     return {f"Event type {rowid}:": events_types_list}
 
+@app.post("/event_types/add/")
+async def add_event_type(name: str, db: AsyncSession = Depends(Get_DB)):
+    new_event_type = Event_Type(name=name, events=[])
+    db.add(new_event_type)
+    await db.commit()
+    
+    results = await db.execute(
+        select(Event_Type)
+        .options(selectinload(Event_Type.events))
+        .order_by(Event_Type.rowid.desc())
+        .limit(1)
+    )
+    return results.scalars().first()
+
+@app.delete("/event_types/delete/{rowid}")
+async def delete_event(rowid: int, db: AsyncSession = Depends(Get_DB)):
+    await db.execute(delete(Event_Type).where(Event_Type.rowid == rowid))
+    await db.commit()
+    return {f"Driving event type {rowid} deleted (probably)"}
 
 @app.put("/events/update/{rowid}")
 async def update_event(
-    rowid: int | None = None,
+    rowid: int,
     description: str | None = None,
-    raw_timestamp: str | None = None,
+    raw_timestamp: float | None = None,
     event_type: str | None = None,
     db: AsyncSession = Depends(Get_DB),
 ):
     event_type_data = await find_event_type(event_type, db)
-    timestamp = datetime.datetime.fromtimestamp(raw_timestamp)
+    
+    
+    event = await db.get(Event, rowid)
+    if description:
+        event.description = description
+    if raw_timestamp:
+        event.raw_timestamp = raw_timestamp
+        timestamp = datetime.datetime.fromtimestamp(raw_timestamp)
+        event.timestamp = timestamp
+    if event_type_data:
+        event.event_type = event_type_data
 
-    results = await db.execute(
-        update(Event)
-        .where(Event.rowid == rowid)
-        .values(
-            description=description,
-            timestamp=timestamp,
-            raw_timestamp=raw_timestamp,
-            event_type=event_type_data,
-        )
-    )
     await db.commit()
 
     results = await db.execute(select(Event).where(Event.rowid == rowid).limit(1))
@@ -148,28 +167,29 @@ async def update_event(
 
 @app.post("/events/add")
 async def add_event(
-    description: str | None = None,
-    raw_timestamp: str | None = None,
-    event_type: str | None = None,
+    description: str | None = "N/A",
+    raw_timestamp: float | None = datetime.datetime.now().timestamp(),
+    event_type: str | None = "Turn On", # Turn on is the defaultly inserted event type
     db: AsyncSession = Depends(Get_DB),
 ):
     event_type_data = await find_event_type(event_type, db)
-
-    timestamp = datetime.datetime.now()
-    if raw_timestamp:
-        timestamp = datetime.datetime.fromtimestamp(raw_timestamp)
-
-    results = await db.execute(
-        insert(Event).values(
-            description=description,
-            timestamp=timestamp,
-            raw_timestamp=raw_timestamp,
-            event_type=event_type_data,
-        )
+    timestamp = datetime.datetime.fromtimestamp(raw_timestamp)
+ 
+    new_event = Event(
+        description=description,
+        raw_timestamp=raw_timestamp,
+        timestamp=timestamp,
+        event_type=event_type_data,
     )
+    db.add(new_event)
     await db.commit()
 
-    results = await db.execute(select(Event).order_by(Event.rowid.desc).limit(1))
+    results = await db.execute(
+        select(Event)
+        .options(selectinload(Event.event_type))
+        .order_by(Event.rowid.desc())
+        .limit(1)
+    )
     return results.scalars().first()
 
 
