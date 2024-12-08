@@ -1,0 +1,76 @@
+\chapter{U-\/\+Peeper}
+\hypertarget{index}{}\label{index}\index{U-\/Peeper@{U-\/Peeper}}
+\label{index_md_README}%
+\Hypertarget{index_md_README}%
+
+
+This is the repository for a remote-\/controlled car project for ECE 5. This includes the web application hosted on Raspberry Pi and microcontroller code.\hypertarget{index_autotoc_md1}{}\doxysection{\texorpdfstring{Tech Stack}{Tech Stack}}\label{index_autotoc_md1}
+{\bfseries{Frontend\+:}} Svelte 5, Pico\+CSS
+
+{\bfseries{Backend\+:}} Fast\+API with Web\+Sockets
+
+{\bfseries{Server\+:}} Uvicorn, Node.\+js
+
+{\bfseries{DB\+:}} SQLite3, SQLAlchemy
+
+{\bfseries{MCU\+:}} Zephyr on ESP32, Arduino IDE (external repo)
+
+{\bfseries{Devops\+:}} Docker\hypertarget{index_autotoc_md2}{}\doxysection{\texorpdfstring{Zephyr}{Zephyr}}\label{index_autotoc_md2}
+Make sure that you clone the Zephyr repository into {\ttfamily zephyr}, set up a {\ttfamily .venv}, install west, and run
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{pip\ install\ -\/r\ zephyr/scripts/requirements.txt}
+\DoxyCodeLine{west\ init\ -\/l\ zephyr}
+\DoxyCodeLine{west\ update}
+\DoxyCodeLine{west\ sdk\ install}
+\DoxyCodeLine{west\ blobs\ fetch\ hal\_espressif}
+
+\end{DoxyCode}
+
+
+Make sure that you configure a {\ttfamily wifi\+\_\+settings.\+h} file in {\ttfamily zephyr/\+U-\/\+Peeper\+App/src} with {\ttfamily \#define} statements for {\ttfamily SSID}, {\ttfamily BACKEND\+\_\+\+HOST}, {\ttfamily BACKEND\+\_\+\+PORT}
+
+Run this to build the application\+: 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{cd\ zephyr}
+\DoxyCodeLine{west\ build\ -\/p\ always\ -\/b\ esp32\_devkitc\_wroom/esp32/procpu\ U-\/PeeperApp}
+
+\end{DoxyCode}
+
+
+You can then flash and monitor your build\+: 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{west\ flash}
+\DoxyCodeLine{west\ espressif\ monitor}
+
+\end{DoxyCode}
+
+
+Credit to the Zephyr team for creating the RTOS and example projects as well as Craig Peacock at \href{https://github.com/craigpeacock/Zephyr_WiFi/}{\texttt{ https\+://github.\+com/craigpeacock/\+Zephyr\+\_\+\+Wi\+Fi/}} for open-\/source zephyr wifi code adapted in this project.\hypertarget{index_autotoc_md3}{}\doxysection{\texorpdfstring{Backend}{Backend}}\label{index_autotoc_md3}
+Add a {\ttfamily .env} with {\ttfamily BACKEND\+\_\+\+PORT} and {\ttfamily FRONTEND\+\_\+\+PORT} in {\ttfamily webapp} and run via\+: 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{cd\ webapp}
+\DoxyCodeLine{docker\ compose\ up}
+
+\end{DoxyCode}
+
+
+Important endpoints can be found at {\ttfamily localhost\+:8080/docs}. There are also two Web\+Socket endpoints at {\ttfamily /remote/ws/} and {\ttfamily /mcu/ws/} for the remote website and microcontroller to connect to. Currently there is no one-\/to-\/one linking mechanism between remotes and mcus. Messages will broadcast to all remotes or mcus at once.\hypertarget{index_autotoc_md4}{}\doxysection{\texorpdfstring{Frontend}{Frontend}}\label{index_autotoc_md4}
+You can use npm or pnpm as a package manager (I\textquotesingle{}ll use pnpm). Also make sure you have Node installed if you want to build and deploy.
+
+Install the dependencies\+: 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{cd\ webapp/frontend/apps/}
+\DoxyCodeLine{pnpm\ it}
+
+\end{DoxyCode}
+ Note\+: from my experience {\ttfamily pnpm i} will not actually install the dependencies for some reason.
+
+Then, build and run the application\+: 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{pnpm\ run\ build}
+\DoxyCodeLine{PORT=\$FRONTEND\_PORT\ node\ build}
+
+\end{DoxyCode}
+ 

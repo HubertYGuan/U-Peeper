@@ -1,0 +1,87 @@
+\doxysection{zephyr/\+U-\/\+Peeper\+App/src/http\+\_\+requests.h File Reference}
+\hypertarget{http__requests_8h}{}\label{http__requests_8h}\index{zephyr/U-\/PeeperApp/src/http\_requests.h@{zephyr/U-\/PeeperApp/src/http\_requests.h}}
+
+
+HTTP request and socket management header file.  
+
+
+{\ttfamily \#include $<$stdio.\+h$>$}\newline
+{\ttfamily \#include $<$stdlib.\+h$>$}\newline
+{\ttfamily \#include $<$zephyr/net/http/client.\+h$>$}\newline
+{\ttfamily \#include $<$zephyr/net/socket.\+h$>$}\newline
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{http__requests_8h_a86f56e0f9fb8c188b5497d8173cdfffc}{Print\+Addr\+Info\+Results}} (struct zsock\+\_\+addrinfo \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}results)
+\begin{DoxyCompactList}\small\item\em Prints IPv4 addresses after IP query. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{http__requests_8h_a7bb55aae583c814db37a08234fd95da9}{HTTPRequest}} (int sock, char \texorpdfstring{$\ast$}{*}hostname, char \texorpdfstring{$\ast$}{*}url, enum http\+\_\+method method)
+\begin{DoxyCompactList}\small\item\em Makes an HTTP request. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{http__requests_8h_ae1a01b9147f37c06fb8bad19c64fcf7e}{Connect\+Socket}} (struct zsock\+\_\+addrinfo \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}results, uint16\+\_\+t port)
+\begin{DoxyCompactList}\small\item\em Makes a socket connection after IP query. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+HTTP request and socket management header file. 
+
+
+
+\doxysubsection{Function Documentation}
+\Hypertarget{http__requests_8h_ae1a01b9147f37c06fb8bad19c64fcf7e}\index{http\_requests.h@{http\_requests.h}!ConnectSocket@{ConnectSocket}}
+\index{ConnectSocket@{ConnectSocket}!http\_requests.h@{http\_requests.h}}
+\doxysubsubsection{\texorpdfstring{ConnectSocket()}{ConnectSocket()}}
+{\footnotesize\ttfamily \label{http__requests_8h_ae1a01b9147f37c06fb8bad19c64fcf7e} 
+int Connect\+Socket (\begin{DoxyParamCaption}\item[{struct zsock\+\_\+addrinfo \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}}]{results}{, }\item[{uint16\+\_\+t}]{port}{}\end{DoxyParamCaption})}
+
+
+
+Makes a socket connection after IP query. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em results} & zsock\+\_\+addrinfo array pointer used to store IP query results \\
+\hline
+{\em port} & Host port \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+int\+: \texorpdfstring{$<$}{<}0 if error, else socket file descriptor 
+\end{DoxyReturn}
+\Hypertarget{http__requests_8h_a7bb55aae583c814db37a08234fd95da9}\index{http\_requests.h@{http\_requests.h}!HTTPRequest@{HTTPRequest}}
+\index{HTTPRequest@{HTTPRequest}!http\_requests.h@{http\_requests.h}}
+\doxysubsubsection{\texorpdfstring{HTTPRequest()}{HTTPRequest()}}
+{\footnotesize\ttfamily \label{http__requests_8h_a7bb55aae583c814db37a08234fd95da9} 
+int HTTPRequest (\begin{DoxyParamCaption}\item[{int}]{sock}{, }\item[{char \texorpdfstring{$\ast$}{*}}]{hostname}{, }\item[{char \texorpdfstring{$\ast$}{*}}]{url}{, }\item[{enum http\+\_\+method}]{method}{}\end{DoxyParamCaption})}
+
+
+
+Makes an HTTP request. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em sock} & Socket file descriptor \\
+\hline
+{\em hostname} & Host IP Address and port \\
+\hline
+{\em url} & Path to endpoint after hostname \\
+\hline
+{\em method} & HTTP method \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+int\+: \texorpdfstring{$<$}{<}0 if error, else number of bytes sent to the server 
+\end{DoxyReturn}
+\Hypertarget{http__requests_8h_a86f56e0f9fb8c188b5497d8173cdfffc}\index{http\_requests.h@{http\_requests.h}!PrintAddrInfoResults@{PrintAddrInfoResults}}
+\index{PrintAddrInfoResults@{PrintAddrInfoResults}!http\_requests.h@{http\_requests.h}}
+\doxysubsubsection{\texorpdfstring{PrintAddrInfoResults()}{PrintAddrInfoResults()}}
+{\footnotesize\ttfamily \label{http__requests_8h_a86f56e0f9fb8c188b5497d8173cdfffc} 
+void Print\+Addr\+Info\+Results (\begin{DoxyParamCaption}\item[{struct zsock\+\_\+addrinfo \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}}]{results}{}\end{DoxyParamCaption})}
+
+
+
+Prints IPv4 addresses after IP query. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em results} & zsock\+\_\+addrinfo array pointer used to store IP query results \\
+\hline
+\end{DoxyParams}

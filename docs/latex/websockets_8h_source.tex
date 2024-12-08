@@ -1,0 +1,90 @@
+\doxysection{websockets.\+h}
+\hypertarget{websockets_8h_source}{}\label{websockets_8h_source}\index{zephyr/U-\/PeeperApp/src/websockets.h@{zephyr/U-\/PeeperApp/src/websockets.h}}
+\mbox{\hyperlink{websockets_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#ifndef\ WEBSOCKETS\_H}}
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#define\ WEBSOCKETS\_H\ 6.9}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include\ <zephyr/logging/log.h>}}
+\DoxyCodeLine{00011\ LOG\_MODULE\_REGISTER(net\_websocket\_client\_sample,\ LOG\_LEVEL\_DBG);}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#include\ <zephyr/misc/lorem\_ipsum.h>}}
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#include\ <zephyr/net/net\_ip.h>}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#include\ <zephyr/net/socket.h>}}
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#include\ <zephyr/net/websocket.h>}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#include\ <zephyr/random/random.h>}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#include\ <zephyr/shell/shell.h>}}
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#include\ "{}wifi\_settings.h"{}}}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#define\ SERVER\_ADDR4\ BACKEND\_HOST}}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#define\ MAX\_RECV\_BUF\_LEN\ 696}}
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00025\ \textcolor{comment}{/*\ We\ need\ to\ allocate\ bigger\ buffer\ for\ the\ websocket\ data\ we\ receive\ so\ that}}
+\DoxyCodeLine{00026\ \textcolor{comment}{\ *\ the\ websocket\ header\ fits\ into\ it.}}
+\DoxyCodeLine{00027\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#define\ EXTRA\_BUF\_SPACE\ 30}}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ uint8\_t\ temp\_recv\_buf\_ipv4[MAX\_RECV\_BUF\_LEN\ +\ EXTRA\_BUF\_SPACE];}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00032\ \textcolor{keywordtype}{int}\ connect\_cb(\textcolor{keywordtype}{int}\ sock,\ \textcolor{keyword}{struct}\ http\_request\ *req,\ \textcolor{keywordtype}{void}\ *user\_data)}
+\DoxyCodeLine{00033\ \{}
+\DoxyCodeLine{00034\ \ \ \ \ printk(\textcolor{stringliteral}{"{}Websocket\ \%d\ for\ \%s\ connected."{}},\ sock,\ (\textcolor{keywordtype}{char}\ *)user\_data);}
+\DoxyCodeLine{00035\ }
+\DoxyCodeLine{00036\ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00037\ \}}
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00039\ \textcolor{keywordtype}{size\_t}\ how\_much\_to\_send(\textcolor{keywordtype}{size\_t}\ max\_len)}
+\DoxyCodeLine{00040\ \{}
+\DoxyCodeLine{00041\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ amount;}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00043\ \ \ \ \ \textcolor{keywordflow}{do}\ \{}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ amount\ =\ sys\_rand32\_get()\ \%\ max\_len;}
+\DoxyCodeLine{00045\ \ \ \ \ \}\ \textcolor{keywordflow}{while}\ (amount\ ==\ 0U);}
+\DoxyCodeLine{00046\ }
+\DoxyCodeLine{00047\ \ \ \ \ \textcolor{keywordflow}{return}\ amount;}
+\DoxyCodeLine{00048\ \}}
+\DoxyCodeLine{00049\ }
+\DoxyCodeLine{00058\ ssize\_t\ \mbox{\hyperlink{websockets_8h_a76e86ca2c4e67e3ada40aa597401f8da}{sendall\_ws}}(\textcolor{keywordtype}{int}\ sock,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *buf,\ \textcolor{keywordtype}{size\_t}\ len)}
+\DoxyCodeLine{00059\ \{}
+\DoxyCodeLine{00060\ \ \ \ \ \textcolor{keywordflow}{return}\ websocket\_send\_msg(sock,\ buf,\ len,\ WEBSOCKET\_OPCODE\_DATA\_TEXT,\ \textcolor{keyword}{true},\ \textcolor{keyword}{true},}
+\DoxyCodeLine{00061\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ SYS\_FOREVER\_MS);}
+\DoxyCodeLine{00062\ \}}
+\DoxyCodeLine{00063\ }
+\DoxyCodeLine{00074\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{websockets_8h_ae2ecaea03f2c733bfade1a01a4deee10}{recv\_data\_ws}}(\textcolor{keywordtype}{int}\ sock,\ \textcolor{keywordtype}{size\_t}\ amount,\ uint8\_t\ *buf,\ \textcolor{keywordtype}{size\_t}\ buf\_len,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *proto)}
+\DoxyCodeLine{00075\ \{}
+\DoxyCodeLine{00076\ \ \ \ \ uint64\_t\ remaining\ =\ ULLONG\_MAX;}
+\DoxyCodeLine{00077\ \ \ \ \ \textcolor{keywordtype}{int}\ total\_read;}
+\DoxyCodeLine{00078\ \ \ \ \ uint32\_t\ message\_type;}
+\DoxyCodeLine{00079\ \ \ \ \ \textcolor{keywordtype}{int}\ ret,\ read\_pos;}
+\DoxyCodeLine{00080\ }
+\DoxyCodeLine{00081\ \ \ \ \ ret\ =\ -\/1;}
+\DoxyCodeLine{00082\ \ \ \ \ read\_pos\ =\ 0;}
+\DoxyCodeLine{00083\ \ \ \ \ total\_read\ =\ 0;}
+\DoxyCodeLine{00084\ }
+\DoxyCodeLine{00085\ \ \ \ \ \textcolor{keywordflow}{while}\ (remaining\ >\ 0)\ \{}
+\DoxyCodeLine{00086\ \ \ \ \ \ \ \ \ ret\ =\ websocket\_recv\_msg(sock,\ buf\ +\ read\_pos,\ buf\_len\ -\/\ read\_pos,\ \&message\_type,}
+\DoxyCodeLine{00087\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \&remaining,\ 0);}
+\DoxyCodeLine{00088\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (ret\ <\ 0)\ \{}
+\DoxyCodeLine{00089\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (ret\ ==\ -\/EAGAIN)\ \{}
+\DoxyCodeLine{00090\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ k\_sleep(K\_MSEC(50));}
+\DoxyCodeLine{00091\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{continue};}
+\DoxyCodeLine{00092\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00093\ }
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ \ \ \ \ printk(\textcolor{stringliteral}{"{}\%s\ connection\ closed\ while\ "{}}}
+\DoxyCodeLine{00095\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}waiting\ (\%d/\%d)"{}},}
+\DoxyCodeLine{00096\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ proto,\ ret,\ errno);}
+\DoxyCodeLine{00097\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00098\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00099\ }
+\DoxyCodeLine{00100\ \ \ \ \ \ \ \ \ read\_pos\ +=\ ret;}
+\DoxyCodeLine{00101\ \ \ \ \ \ \ \ \ total\_read\ +=\ ret;}
+\DoxyCodeLine{00102\ \ \ \ \ \}}
+\DoxyCodeLine{00103\ }
+\DoxyCodeLine{00104\ \ \ \ \ \textcolor{keywordflow}{return}\ ret;}
+\DoxyCodeLine{00105\ \}}
+\DoxyCodeLine{00106\ }
+\DoxyCodeLine{00107\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ !WEBSOCKETS\_H}}
+
+\end{DoxyCode}

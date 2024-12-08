@@ -1,0 +1,108 @@
+\doxysection{zephyr/\+U-\/\+Peeper\+App/src/websockets.h File Reference}
+\hypertarget{websockets_8h}{}\label{websockets_8h}\index{zephyr/U-\/PeeperApp/src/websockets.h@{zephyr/U-\/PeeperApp/src/websockets.h}}
+
+
+Web\+Socket connection management header file.  
+
+
+{\ttfamily \#include $<$zephyr/logging/log.\+h$>$}\newline
+{\ttfamily \#include $<$zephyr/misc/lorem\+\_\+ipsum.\+h$>$}\newline
+{\ttfamily \#include $<$zephyr/net/net\+\_\+ip.\+h$>$}\newline
+{\ttfamily \#include $<$zephyr/net/socket.\+h$>$}\newline
+{\ttfamily \#include $<$zephyr/net/websocket.\+h$>$}\newline
+{\ttfamily \#include $<$zephyr/random/random.\+h$>$}\newline
+{\ttfamily \#include $<$zephyr/shell/shell.\+h$>$}\newline
+{\ttfamily \#include "{}wifi\+\_\+settings.\+h"{}}\newline
+\doxysubsubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{websockets_8h_aafd15b070429d8616672e65dd68f10fd}\label{websockets_8h_aafd15b070429d8616672e65dd68f10fd} 
+\#define {\bfseries WEBSOCKETS\+\_\+H}~6.\+9
+\item 
+\Hypertarget{websockets_8h_adee95eec92c0ce0ae6ad7cf6022c408d}\label{websockets_8h_adee95eec92c0ce0ae6ad7cf6022c408d} 
+\#define {\bfseries SERVER\+\_\+\+ADDR4}~BACKEND\+\_\+\+HOST
+\item 
+\Hypertarget{websockets_8h_ad098c7d4453d618eaa634dbb2a3f4de5}\label{websockets_8h_ad098c7d4453d618eaa634dbb2a3f4de5} 
+\#define {\bfseries MAX\+\_\+\+RECV\+\_\+\+BUF\+\_\+\+LEN}~696
+\item 
+\Hypertarget{websockets_8h_a2a26e181d2b7225b97428c88f2833305}\label{websockets_8h_a2a26e181d2b7225b97428c88f2833305} 
+\#define {\bfseries EXTRA\+\_\+\+BUF\+\_\+\+SPACE}~30
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{websockets_8h_a1f865a9be53f747575f4cf051a3e3849}\label{websockets_8h_a1f865a9be53f747575f4cf051a3e3849} 
+{\bfseries LOG\+\_\+\+MODULE\+\_\+\+REGISTER} (net\+\_\+websocket\+\_\+client\+\_\+sample, LOG\+\_\+\+LEVEL\+\_\+\+DBG)
+\item 
+\Hypertarget{websockets_8h_a1e99b78fb025cec41225b71e133f3943}\label{websockets_8h_a1e99b78fb025cec41225b71e133f3943} 
+int {\bfseries connect\+\_\+cb} (int sock, struct http\+\_\+request \texorpdfstring{$\ast$}{*}req, void \texorpdfstring{$\ast$}{*}user\+\_\+data)
+\item 
+\Hypertarget{websockets_8h_aede76c90099ba5b72a90c314735b7ca1}\label{websockets_8h_aede76c90099ba5b72a90c314735b7ca1} 
+size\+\_\+t {\bfseries how\+\_\+much\+\_\+to\+\_\+send} (size\+\_\+t max\+\_\+len)
+\item 
+ssize\+\_\+t \mbox{\hyperlink{websockets_8h_a76e86ca2c4e67e3ada40aa597401f8da}{sendall\+\_\+ws}} (int sock, const void \texorpdfstring{$\ast$}{*}buf, size\+\_\+t len)
+\begin{DoxyCompactList}\small\item\em Send data across Web\+Socket connection. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{websockets_8h_ae2ecaea03f2c733bfade1a01a4deee10}{recv\+\_\+data\+\_\+ws}} (int sock, size\+\_\+t amount, uint8\+\_\+t \texorpdfstring{$\ast$}{*}buf, size\+\_\+t buf\+\_\+len, const char \texorpdfstring{$\ast$}{*}proto)
+\begin{DoxyCompactList}\small\item\em Receive data over Web\+Socket connection. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{websockets_8h_aada81e67d4f4ed821775c286989e8a36}\label{websockets_8h_aada81e67d4f4ed821775c286989e8a36} 
+uint8\+\_\+t {\bfseries temp\+\_\+recv\+\_\+buf\+\_\+ipv4} \mbox{[}MAX\+\_\+\+RECV\+\_\+\+BUF\+\_\+\+LEN+EXTRA\+\_\+\+BUF\+\_\+\+SPACE\mbox{]}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Web\+Socket connection management header file. 
+
+
+
+\doxysubsection{Function Documentation}
+\Hypertarget{websockets_8h_ae2ecaea03f2c733bfade1a01a4deee10}\index{websockets.h@{websockets.h}!recv\_data\_ws@{recv\_data\_ws}}
+\index{recv\_data\_ws@{recv\_data\_ws}!websockets.h@{websockets.h}}
+\doxysubsubsection{\texorpdfstring{recv\_data\_ws()}{recv\_data\_ws()}}
+{\footnotesize\ttfamily \label{websockets_8h_ae2ecaea03f2c733bfade1a01a4deee10} 
+int recv\+\_\+data\+\_\+ws (\begin{DoxyParamCaption}\item[{int}]{sock}{, }\item[{size\+\_\+t}]{amount}{, }\item[{uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{buf}{, }\item[{size\+\_\+t}]{buf\+\_\+len}{, }\item[{const char \texorpdfstring{$\ast$}{*}}]{proto}{}\end{DoxyParamCaption})}
+
+
+
+Receive data over Web\+Socket connection. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em sock} & Web\+Socket file descriptor \\
+\hline
+{\em amount} & Amount of data to receive \\
+\hline
+{\em buf} & Buffer to write to \\
+\hline
+{\em buf\+\_\+len} & Length of buffer \\
+\hline
+{\em proto} & Network protocol (usu. "{}\+IPv4"{}) \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+int\+: \texorpdfstring{$<$}{<}0 if error, else number of bytes received 
+\end{DoxyReturn}
+\Hypertarget{websockets_8h_a76e86ca2c4e67e3ada40aa597401f8da}\index{websockets.h@{websockets.h}!sendall\_ws@{sendall\_ws}}
+\index{sendall\_ws@{sendall\_ws}!websockets.h@{websockets.h}}
+\doxysubsubsection{\texorpdfstring{sendall\_ws()}{sendall\_ws()}}
+{\footnotesize\ttfamily \label{websockets_8h_a76e86ca2c4e67e3ada40aa597401f8da} 
+ssize\+\_\+t sendall\+\_\+ws (\begin{DoxyParamCaption}\item[{int}]{sock}{, }\item[{const void \texorpdfstring{$\ast$}{*}}]{buf}{, }\item[{size\+\_\+t}]{len}{}\end{DoxyParamCaption})}
+
+
+
+Send data across Web\+Socket connection. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em sock} & Web\+Socket file descriptor \\
+\hline
+{\em buf} & Buffer to send from \\
+\hline
+{\em len} & Length of message (obviously in bytes) \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+ssize\+\_\+t\+: \texorpdfstring{$<$}{<}0 if error, else the number of bytes sent 
+\end{DoxyReturn}

@@ -1,0 +1,55 @@
+\doxysection{webapp/backend/databaseinit.py File Reference}
+\hypertarget{databaseinit_8py}{}\label{databaseinit_8py}\index{webapp/backend/databaseinit.py@{webapp/backend/databaseinit.py}}
+
+
+File to initiate SQLite db connections.  
+
+
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{databaseinit_8py_a2cbfa8f0aba3a29b3535afee283462d8}\label{databaseinit_8py_a2cbfa8f0aba3a29b3535afee283462d8} 
+{\bfseries databaseinit.\+Get\+\_\+\+DB} ()
+\begin{DoxyCompactList}\small\item\em Obtain Async\+Session of database. \end{DoxyCompactList}\item 
+\Hypertarget{databaseinit_8py_ad73b6fdfffa9815460b179cdb9a01593}\label{databaseinit_8py_ad73b6fdfffa9815460b179cdb9a01593} 
+{\bfseries databaseinit.\+Drop\+\_\+\+Tables} ()
+\item 
+\Hypertarget{databaseinit_8py_afa25c0a14d1aee2c8bfc20cc407c9d63}\label{databaseinit_8py_afa25c0a14d1aee2c8bfc20cc407c9d63} 
+{\bfseries databaseinit.\+Create\+\_\+\+Tables} ()
+\item 
+\Hypertarget{databaseinit_8py_aa9ce23f1a7c15a0429a5a34542df8d63}\label{databaseinit_8py_aa9ce23f1a7c15a0429a5a34542df8d63} 
+{\bfseries databaseinit.\+Insert\+\_\+\+Default} ()
+\item 
+\Hypertarget{databaseinit_8py_a1829be4e6d53c298353c983bdc70a5ad}\label{databaseinit_8py_a1829be4e6d53c298353c983bdc70a5ad} 
+{\bfseries databaseinit.\+main} ()
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{databaseinit_8py_a9559f93b6e8ee2e2d6116110324826a3}{databaseinit.\+DB\+\_\+engine}}
+\item 
+\Hypertarget{databaseinit_8py_ad2769d2876c63fc4375f6caf4d779298}\label{databaseinit_8py_ad2769d2876c63fc4375f6caf4d779298} 
+{\bfseries databaseinit.\+DB\+\_\+\+Session} = async\+\_\+sessionmaker(DB\+\_\+engine)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+File to initiate SQLite db connections. 
+
+
+
+\doxysubsection{Variable Documentation}
+\Hypertarget{databaseinit_8py_a9559f93b6e8ee2e2d6116110324826a3}\index{databaseinit.py@{databaseinit.py}!DB\_engine@{DB\_engine}}
+\index{DB\_engine@{DB\_engine}!databaseinit.py@{databaseinit.py}}
+\doxysubsubsection{\texorpdfstring{DB\_engine}{DB\_engine}}
+{\footnotesize\ttfamily \label{databaseinit_8py_a9559f93b6e8ee2e2d6116110324826a3} 
+databaseinit.\+DB\+\_\+engine}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ =\ \ create\_async\_engine(}
+\DoxyCodeLine{00002\ \ \ \ \ \textcolor{stringliteral}{"{}sqlite+aiosqlite:////var/lib/db\_data/database.sqlite3"{}},}
+\DoxyCodeLine{00003\ \ \ \ \ connect\_args=\{\textcolor{stringliteral}{"{}check\_same\_thread"{}}:\ \textcolor{keyword}{False}\},}
+\DoxyCodeLine{00004\ )}
+
+\end{DoxyCode}

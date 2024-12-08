@@ -1,0 +1,50 @@
+\doxysection{db\+\_\+models.\+db\+\_\+models.\+Event Class Reference}
+\hypertarget{classdb__models_1_1db__models_1_1Event}{}\label{classdb__models_1_1db__models_1_1Event}\index{db\_models.db\_models.Event@{db\_models.db\_models.Event}}
+
+
+\doxylink{classdb__models_1_1db__models_1_1Event}{Event} with (raw) timestamp, description and backpopulated event\+\_\+type.  
+
+
+Inheritance diagram for db\+\_\+models.\+db\+\_\+models.\+Event\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=3.000000cm]{classdb__models_1_1db__models_1_1Event}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{classdb__models_1_1db__models_1_1Event_ad1b6331a2e72be22ef799f7b6cfadf95}\label{classdb__models_1_1db__models_1_1Event_ad1b6331a2e72be22ef799f7b6cfadf95} 
+str {\bfseries \+\_\+\+\_\+repr\+\_\+\+\_\+} (self)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Static Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{classdb__models_1_1db__models_1_1Event_a919341c1230476aca2358ae5a65be3e2}\label{classdb__models_1_1db__models_1_1Event_a919341c1230476aca2358ae5a65be3e2} 
+Mapped {\bfseries timestamp} = mapped\+\_\+column(nullable=False)
+\item 
+\Hypertarget{classdb__models_1_1db__models_1_1Event_a12f7e4434c4fad7f8aa358f9e7d797d8}\label{classdb__models_1_1db__models_1_1Event_a12f7e4434c4fad7f8aa358f9e7d797d8} 
+Mapped {\bfseries raw\+\_\+timestamp} = mapped\+\_\+column(nullable=False)
+\item 
+\Hypertarget{classdb__models_1_1db__models_1_1Event_ae94d4c0e5e5057037e5e042c146e6863}\label{classdb__models_1_1db__models_1_1Event_ae94d4c0e5e5057037e5e042c146e6863} 
+Mapped {\bfseries description} \mbox{[}str\mbox{]}
+\item 
+\Hypertarget{classdb__models_1_1db__models_1_1Event_a5e41184dd43a770ebc0be6ada82e60c2}\label{classdb__models_1_1db__models_1_1Event_a5e41184dd43a770ebc0be6ada82e60c2} 
+Mapped {\bfseries event\+\_\+type} = relationship(back\+\_\+populates="{}events"{})
+\item 
+\Hypertarget{classdb__models_1_1db__models_1_1Event_a5d5af2f764692b03cac39d7c1b4f23b7}\label{classdb__models_1_1db__models_1_1Event_a5d5af2f764692b03cac39d7c1b4f23b7} 
+Mapped {\bfseries rowid} = mapped\+\_\+column(primary\+\_\+key=True)
+\item 
+\Hypertarget{classdb__models_1_1db__models_1_1Event_ac04c033715ff015709c366c70ed7a76e}\label{classdb__models_1_1db__models_1_1Event_ac04c033715ff015709c366c70ed7a76e} 
+Mapped {\bfseries type\+\_\+id} = mapped\+\_\+column(Foreign\+Key("{}event\+\_\+types.\+rowid"{}))
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\doxylink{classdb__models_1_1db__models_1_1Event}{Event} with (raw) timestamp, description and backpopulated event\+\_\+type. 
+
+Includes foreign key mapping to an event\+\_\+type 
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+webapp/backend/db\+\_\+models/\mbox{\hyperlink{db__models_8py}{db\+\_\+models.\+py}}\end{DoxyCompactItemize}

@@ -1,0 +1,222 @@
+\doxysection{webapp/backend/api.py File Reference}
+\hypertarget{api_8py}{}\label{api_8py}\index{webapp/backend/api.py@{webapp/backend/api.py}}
+
+
+Main backend REST API.  
+
+
+\doxysubsubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \mbox{\hyperlink{classapi_1_1WS__Type}{api.\+WS\+\_\+\+Type}}
+\begin{DoxyCompactList}\small\item\em Types of Web\+Socket connections possible. \end{DoxyCompactList}\item 
+class \mbox{\hyperlink{classapi_1_1U__WebSocket}{api.\+U\+\_\+\+Web\+Socket}}
+\begin{DoxyCompactList}\small\item\em Storage class that associates a \doxylink{classapi_1_1WS__Type}{WS\+\_\+\+Type} with a Web\+Socket connection. \end{DoxyCompactList}\item 
+class \mbox{\hyperlink{classapi_1_1WS__Manager}{api.\+WS\+\_\+\+Manager}}
+\begin{DoxyCompactList}\small\item\em Manager class for Web\+Sockets. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{api_8py_a2e391a932acea3b93301c5130d01bdeb}\label{api_8py_a2e391a932acea3b93301c5130d01bdeb} 
+{\bfseries api.\+find\+\_\+event\+\_\+type} (str event\+\_\+type, Async\+Session db)
+\item 
+\Hypertarget{api_8py_a4d45ed44be82004cb4304fc49e1c8d8d}\label{api_8py_a4d45ed44be82004cb4304fc49e1c8d8d} 
+{\bfseries api.\+root} ()
+\item 
+\Hypertarget{api_8py_ae7289606ef6b855592647625e04679ee}\label{api_8py_ae7289606ef6b855592647625e04679ee} 
+{\bfseries api.\+read\+\_\+events} (Async\+Session db=Depends(Get\+\_\+\+DB))
+\begin{DoxyCompactList}\small\item\em Gets all events. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{api_8py_a97a69fefd9156f0ea5bcca527aa492bb}{api.\+read\+\_\+event}} (int rowid, Async\+Session db=Depends(Get\+\_\+\+DB))
+\begin{DoxyCompactList}\small\item\em Gets event based on rowid. \end{DoxyCompactList}\item 
+\Hypertarget{api_8py_ac470517cec151a8f3eb0bdf28e865b69}\label{api_8py_ac470517cec151a8f3eb0bdf28e865b69} 
+{\bfseries api.\+read\+\_\+event\+\_\+types} (Async\+Session db=Depends(Get\+\_\+\+DB))
+\begin{DoxyCompactList}\small\item\em Gets event\+\_\+types. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{api_8py_adb9abbcb7c1eadbf52237d4191b0feb0}{api.\+read\+\_\+event\+\_\+type}} (int rowid, Async\+Session db=Depends(Get\+\_\+\+DB))
+\begin{DoxyCompactList}\small\item\em Gets event\+\_\+types based on rowid. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{api_8py_a98809d3c6bc37f771b185c9e2b95dc6f}{api.\+add\+\_\+event\+\_\+type}} (str name, Async\+Session db=Depends(Get\+\_\+\+DB))
+\begin{DoxyCompactList}\small\item\em Inserts new event\+\_\+type. \end{DoxyCompactList}\item 
+\Hypertarget{api_8py_a42af43284b3ce5eaa3811b853c049ca3}\label{api_8py_a42af43284b3ce5eaa3811b853c049ca3} 
+{\bfseries api.\+get\+\_\+event\+\_\+types} (Async\+Session db=Depends(Get\+\_\+\+DB))
+\begin{DoxyCompactList}\small\item\em Gets all event\+\_\+types. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{api_8py_aa995eeaa575481f0c7645a834a6adcc6}{api.\+delete\+\_\+event\+\_\+type}} (int event\+\_\+type\+\_\+id, Async\+Session db=Depends(Get\+\_\+\+DB))
+\begin{DoxyCompactList}\small\item\em Deletes an event type. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{api_8py_a480e6d82de6dd3e6a11b691e6dd2916e}{api.\+update\+\_\+event}} (int rowid, str\texorpdfstring{$\vert$}{|}None description=None, float\texorpdfstring{$\vert$}{|}None raw\+\_\+timestamp=None, str\texorpdfstring{$\vert$}{|}None event\+\_\+type=None, Async\+Session db=Depends(Get\+\_\+\+DB))
+\begin{DoxyCompactList}\small\item\em Updates an existing event. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{api_8py_a3f5b846c2da6086a94fd37993ba41794}{api.\+add\+\_\+event}} (str\texorpdfstring{$\vert$}{|}None description="{}N/A"{}, float\texorpdfstring{$\vert$}{|}None raw\+\_\+timestamp=datetime.\+datetime.\+now().timestamp(), str\texorpdfstring{$\vert$}{|}None event\+\_\+type="{}Turn On"{}, Async\+Session db=Depends(Get\+\_\+\+DB))
+\begin{DoxyCompactList}\small\item\em Inserts an event. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{api_8py_a7e861287da4d9ab3333cefc2d84b0469}{api.\+delete\+\_\+event}} (int rowid, Async\+Session db=Depends(Get\+\_\+\+DB))
+\begin{DoxyCompactList}\small\item\em Deletes an event. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{api_8py_a139c97626d1e0287e79f05e799832c67}{api.\+mcu\+\_\+websocket}} (Web\+Socket websocket)
+\begin{DoxyCompactList}\small\item\em Web\+Socket endpoint for microcontrollers. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{api_8py_a4e6b381581bef15142829691ea2df33c}{api.\+remote\+\_\+websocket}} (Web\+Socket websocket)
+\begin{DoxyCompactList}\small\item\em Web\+Socket endpoint for remotes. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{api_8py_a484bbf20571943d1aceb9cfc79748b48}\label{api_8py_a484bbf20571943d1aceb9cfc79748b48} 
+{\bfseries api.\+app} = Fast\+API()
+\item 
+\Hypertarget{api_8py_a03e6c022ef18fd91c6b29f8b65b21419}\label{api_8py_a03e6c022ef18fd91c6b29f8b65b21419} 
+{\bfseries api.\+allow\+\_\+origins}
+\item 
+\Hypertarget{api_8py_ad613a5c9e1cc2ddced4d0e6adb57b154}\label{api_8py_ad613a5c9e1cc2ddced4d0e6adb57b154} 
+{\bfseries api.\+allow\+\_\+credentials}
+\item 
+\Hypertarget{api_8py_aca547b5f9a21aef7b7cb4544fb294cf9}\label{api_8py_aca547b5f9a21aef7b7cb4544fb294cf9} 
+{\bfseries api.\+allow\+\_\+methods}
+\item 
+\Hypertarget{api_8py_a6e846642a456df2b67efb57f0e7d7937}\label{api_8py_a6e846642a456df2b67efb57f0e7d7937} 
+{\bfseries api.\+allow\+\_\+headers}
+\item 
+\Hypertarget{api_8py_a9ee5840f37975c40af0d783529a089ce}\label{api_8py_a9ee5840f37975c40af0d783529a089ce} 
+{\bfseries api.\+manager} = \mbox{\hyperlink{classapi_1_1WS__Manager}{WS\+\_\+\+Manager}}()
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Main backend REST API. 
+
+Includes endpoints for adding events and event types (e.\+g. Ultrasonic events) See \doxylink{db__models_8py}{db\+\_\+models/db\+\_\+models.\+py} for more info on events and event types Also includes two Web\+Socket endpoints for managing remote to microcontroller communication 
+
+\doxysubsection{Function Documentation}
+\Hypertarget{api_8py_a3f5b846c2da6086a94fd37993ba41794}\index{api.py@{api.py}!add\_event@{add\_event}}
+\index{add\_event@{add\_event}!api.py@{api.py}}
+\doxysubsubsection{\texorpdfstring{add\_event()}{add\_event()}}
+{\footnotesize\ttfamily \label{api_8py_a3f5b846c2da6086a94fd37993ba41794} 
+api.\+add\+\_\+event (\begin{DoxyParamCaption}\item[{str \texorpdfstring{$\vert$}{|} None }]{description}{ = {\ttfamily "{}N/A"{}}, }\item[{float \texorpdfstring{$\vert$}{|} None }]{raw\+\_\+timestamp}{ = {\ttfamily datetime.datetime.now().timestamp()}, }\item[{str \texorpdfstring{$\vert$}{|} None }]{event\+\_\+type}{ = {\ttfamily "{}Turn~On"{}}, }\item[{Async\+Session }]{db}{ = {\ttfamily Depends(Get\+\_\+DB)}}\end{DoxyParamCaption})}
+
+
+
+Inserts an event. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em description} & New description, default "{}\+N/\+A"{} \\
+\hline
+{\em raw\+\_\+timestamp} & Updated POSIX timestamp, default current time \\
+\hline
+{\em event\+\_\+type} & Name of updated event\+\_\+type, default "{}\+Turn On"{} \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+New event 
+\end{DoxyReturn}
+\Hypertarget{api_8py_a98809d3c6bc37f771b185c9e2b95dc6f}\index{api.py@{api.py}!add\_event\_type@{add\_event\_type}}
+\index{add\_event\_type@{add\_event\_type}!api.py@{api.py}}
+\doxysubsubsection{\texorpdfstring{add\_event\_type()}{add\_event\_type()}}
+{\footnotesize\ttfamily \label{api_8py_a98809d3c6bc37f771b185c9e2b95dc6f} 
+api.\+add\+\_\+event\+\_\+type (\begin{DoxyParamCaption}\item[{str}]{name}{, }\item[{Async\+Session }]{db}{ = {\ttfamily Depends(Get\+\_\+DB)}}\end{DoxyParamCaption})}
+
+
+
+Inserts new event\+\_\+type. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em name} & Name of the new event \\
+\hline
+\end{DoxyParams}
+\Hypertarget{api_8py_a7e861287da4d9ab3333cefc2d84b0469}\index{api.py@{api.py}!delete\_event@{delete\_event}}
+\index{delete\_event@{delete\_event}!api.py@{api.py}}
+\doxysubsubsection{\texorpdfstring{delete\_event()}{delete\_event()}}
+{\footnotesize\ttfamily \label{api_8py_a7e861287da4d9ab3333cefc2d84b0469} 
+api.\+delete\+\_\+event (\begin{DoxyParamCaption}\item[{int}]{rowid}{, }\item[{Async\+Session }]{db}{ = {\ttfamily Depends(Get\+\_\+DB)}}\end{DoxyParamCaption})}
+
+
+
+Deletes an event. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em rowid} & ID of event to delete \\
+\hline
+\end{DoxyParams}
+\Hypertarget{api_8py_aa995eeaa575481f0c7645a834a6adcc6}\index{api.py@{api.py}!delete\_event\_type@{delete\_event\_type}}
+\index{delete\_event\_type@{delete\_event\_type}!api.py@{api.py}}
+\doxysubsubsection{\texorpdfstring{delete\_event\_type()}{delete\_event\_type()}}
+{\footnotesize\ttfamily \label{api_8py_aa995eeaa575481f0c7645a834a6adcc6} 
+api.\+delete\+\_\+event\+\_\+type (\begin{DoxyParamCaption}\item[{int}]{event\+\_\+type\+\_\+id}{, }\item[{Async\+Session }]{db}{ = {\ttfamily Depends(Get\+\_\+DB)}}\end{DoxyParamCaption})}
+
+
+
+Deletes an event type. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em event\+\_\+type\+\_\+id} & ID of the event type to delete \\
+\hline
+\end{DoxyParams}
+\Hypertarget{api_8py_a139c97626d1e0287e79f05e799832c67}\index{api.py@{api.py}!mcu\_websocket@{mcu\_websocket}}
+\index{mcu\_websocket@{mcu\_websocket}!api.py@{api.py}}
+\doxysubsubsection{\texorpdfstring{mcu\_websocket()}{mcu\_websocket()}}
+{\footnotesize\ttfamily \label{api_8py_a139c97626d1e0287e79f05e799832c67} 
+api.\+mcu\+\_\+websocket (\begin{DoxyParamCaption}\item[{Web\+Socket}]{websocket}{}\end{DoxyParamCaption})}
+
+
+
+Web\+Socket endpoint for microcontrollers. 
+
+Automatically forwards data received from the mcu to the WS\+\_\+\+Manager to notify remote \Hypertarget{api_8py_a97a69fefd9156f0ea5bcca527aa492bb}\index{api.py@{api.py}!read\_event@{read\_event}}
+\index{read\_event@{read\_event}!api.py@{api.py}}
+\doxysubsubsection{\texorpdfstring{read\_event()}{read\_event()}}
+{\footnotesize\ttfamily \label{api_8py_a97a69fefd9156f0ea5bcca527aa492bb} 
+api.\+read\+\_\+event (\begin{DoxyParamCaption}\item[{int}]{rowid}{, }\item[{Async\+Session }]{db}{ = {\ttfamily Depends(Get\+\_\+DB)}}\end{DoxyParamCaption})}
+
+
+
+Gets event based on rowid. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em rowid} & ID of the event \\
+\hline
+\end{DoxyParams}
+\Hypertarget{api_8py_adb9abbcb7c1eadbf52237d4191b0feb0}\index{api.py@{api.py}!read\_event\_type@{read\_event\_type}}
+\index{read\_event\_type@{read\_event\_type}!api.py@{api.py}}
+\doxysubsubsection{\texorpdfstring{read\_event\_type()}{read\_event\_type()}}
+{\footnotesize\ttfamily \label{api_8py_adb9abbcb7c1eadbf52237d4191b0feb0} 
+api.\+read\+\_\+event\+\_\+type (\begin{DoxyParamCaption}\item[{int}]{rowid}{, }\item[{Async\+Session }]{db}{ = {\ttfamily Depends(Get\+\_\+DB)}}\end{DoxyParamCaption})}
+
+
+
+Gets event\+\_\+types based on rowid. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em rowid} & ID of the event\+\_\+type \\
+\hline
+\end{DoxyParams}
+\Hypertarget{api_8py_a4e6b381581bef15142829691ea2df33c}\index{api.py@{api.py}!remote\_websocket@{remote\_websocket}}
+\index{remote\_websocket@{remote\_websocket}!api.py@{api.py}}
+\doxysubsubsection{\texorpdfstring{remote\_websocket()}{remote\_websocket()}}
+{\footnotesize\ttfamily \label{api_8py_a4e6b381581bef15142829691ea2df33c} 
+api.\+remote\+\_\+websocket (\begin{DoxyParamCaption}\item[{Web\+Socket}]{websocket}{}\end{DoxyParamCaption})}
+
+
+
+Web\+Socket endpoint for remotes. 
+
+Automatically forwards data received from the remote to the WS\+\_\+\+Manager to send command \Hypertarget{api_8py_a480e6d82de6dd3e6a11b691e6dd2916e}\index{api.py@{api.py}!update\_event@{update\_event}}
+\index{update\_event@{update\_event}!api.py@{api.py}}
+\doxysubsubsection{\texorpdfstring{update\_event()}{update\_event()}}
+{\footnotesize\ttfamily \label{api_8py_a480e6d82de6dd3e6a11b691e6dd2916e} 
+api.\+update\+\_\+event (\begin{DoxyParamCaption}\item[{int}]{rowid}{, }\item[{str \texorpdfstring{$\vert$}{|} None }]{description}{ = {\ttfamily None}, }\item[{float \texorpdfstring{$\vert$}{|} None }]{raw\+\_\+timestamp}{ = {\ttfamily None}, }\item[{str \texorpdfstring{$\vert$}{|} None }]{event\+\_\+type}{ = {\ttfamily None}, }\item[{Async\+Session }]{db}{ = {\ttfamily Depends(Get\+\_\+DB)}}\end{DoxyParamCaption})}
+
+
+
+Updates an existing event. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em rowid} & ID of the event to update \\
+\hline
+{\em description} & New description, default None \\
+\hline
+{\em raw\+\_\+timestamp} & Updated POSIX timestamp, default None \\
+\hline
+{\em event\+\_\+type} & Name of updated event\+\_\+type, default None \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Updated event 
+\end{DoxyReturn}

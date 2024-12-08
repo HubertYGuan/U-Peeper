@@ -1,0 +1,20 @@
+\doxysection{http\+\_\+requests.\+h}
+\hypertarget{http__requests_8h_source}{}\label{http__requests_8h_source}\index{zephyr/U-\/PeeperApp/src/http\_requests.h@{zephyr/U-\/PeeperApp/src/http\_requests.h}}
+\mbox{\hyperlink{http__requests_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#ifndef\ HTTP\_REQUESTS\_H}}
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ <stdio.h>}}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#include\ <stdlib.h>}}
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include\ <zephyr/net/http/client.h>}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#include\ <zephyr/net/socket.h>}}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00017\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{http__requests_8h_a86f56e0f9fb8c188b5497d8173cdfffc}{PrintAddrInfoResults}}(\textcolor{keyword}{struct}\ zsock\_addrinfo\ **results);}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00028\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{http__requests_8h_a7bb55aae583c814db37a08234fd95da9}{HTTPRequest}}(\textcolor{keywordtype}{int}\ sock,\ \textcolor{keywordtype}{char}\ *hostname,\ \textcolor{keywordtype}{char}\ *url,\ \textcolor{keyword}{enum}\ http\_method\ method);}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00037\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{http__requests_8h_ae1a01b9147f37c06fb8bad19c64fcf7e}{ConnectSocket}}(\textcolor{keyword}{struct}\ zsock\_addrinfo\ **results,\ uint16\_t\ port);}
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00039\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ !HTTP\_REQUESTS\_H}}
+
+\end{DoxyCode}

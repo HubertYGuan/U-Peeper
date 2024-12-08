@@ -1,0 +1,41 @@
+\doxysection{api.\+WS\+\_\+\+Manager Class Reference}
+\hypertarget{classapi_1_1WS__Manager}{}\label{classapi_1_1WS__Manager}\index{api.WS\_Manager@{api.WS\_Manager}}
+
+
+Manager class for Web\+Sockets.  
+
+
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{classapi_1_1WS__Manager_a9916e8054d10a0f0e3d2ee5f76306c41}\label{classapi_1_1WS__Manager_a9916e8054d10a0f0e3d2ee5f76306c41} 
+{\bfseries \+\_\+\+\_\+init\+\_\+\+\_\+} (self)
+\begin{DoxyCompactList}\small\item\em Initialize with an empty list of \doxylink{classapi_1_1U__WebSocket}{U\+\_\+\+Web\+Socket} connections. \end{DoxyCompactList}\item 
+\Hypertarget{classapi_1_1WS__Manager_abe808182db4e5906b13dabe86656cb07}\label{classapi_1_1WS__Manager_abe808182db4e5906b13dabe86656cb07} 
+{\bfseries connect} (self, Web\+Socket websocket, int ws\+\_\+type)
+\begin{DoxyCompactList}\small\item\em Connects a Web\+Socket. \end{DoxyCompactList}\item 
+\Hypertarget{classapi_1_1WS__Manager_a203158e20dbeae2362e3f7fa7a5b8db8}\label{classapi_1_1WS__Manager_a203158e20dbeae2362e3f7fa7a5b8db8} 
+{\bfseries disconnect} (self, Web\+Socket websocket)
+\begin{DoxyCompactList}\small\item\em Disconnects a Web\+Socket. \end{DoxyCompactList}\item 
+\Hypertarget{classapi_1_1WS__Manager_adc0ad3383a42afdf7d57ddcfb112000a}\label{classapi_1_1WS__Manager_adc0ad3383a42afdf7d57ddcfb112000a} 
+{\bfseries send\+\_\+cmd} (self, cmd)
+\begin{DoxyCompactList}\small\item\em Broadcasts a command from a remote to all mcu Web\+Sockets. \end{DoxyCompactList}\item 
+\Hypertarget{classapi_1_1WS__Manager_aa69402744733c1a2cd60c0b2ae947feb}\label{classapi_1_1WS__Manager_aa69402744733c1a2cd60c0b2ae947feb} 
+{\bfseries notify\+\_\+remote} (self, str data)
+\begin{DoxyCompactList}\small\item\em Broadcasts a notification from an mcu to all remote Web\+Sockets. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{classapi_1_1WS__Manager_a2a1346a4f7653716ff2872b2bfb2c4d4}\label{classapi_1_1WS__Manager_a2a1346a4f7653716ff2872b2bfb2c4d4} 
+list {\bfseries active\+\_\+connections} = \mbox{[}$\,$\mbox{]}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Manager class for Web\+Sockets. 
+
+Currently only supports one mcu/remote websocket (sends cmds to opposite Web\+Sockets at once) 
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+webapp/backend/\mbox{\hyperlink{api_8py}{api.\+py}}\end{DoxyCompactItemize}

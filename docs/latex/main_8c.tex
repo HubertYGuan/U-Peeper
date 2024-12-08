@@ -1,0 +1,153 @@
+\doxysection{zephyr/\+U-\/\+Peeper\+App/src/main.c File Reference}
+\hypertarget{main_8c}{}\label{main_8c}\index{zephyr/U-\/PeeperApp/src/main.c@{zephyr/U-\/PeeperApp/src/main.c}}
+
+
+Main setup and event-\/loop based program running on ESP32.  
+
+
+{\ttfamily \#include $<$zephyr/kernel.\+h$>$}\newline
+{\ttfamily \#include $<$zephyr/drivers/gpio.\+h$>$}\newline
+{\ttfamily \#include $<$zephyr/net/net\+\_\+if.\+h$>$}\newline
+{\ttfamily \#include $<$zephyr/net/wifi\+\_\+mgmt.\+h$>$}\newline
+{\ttfamily \#include $<$zephyr/net/net\+\_\+event.\+h$>$}\newline
+{\ttfamily \#include $<$errno.\+h$>$}\newline
+{\ttfamily \#include $<$stdlib.\+h$>$}\newline
+{\ttfamily \#include $<$string.\+h$>$}\newline
+{\ttfamily \#include $<$zephyr/sys/reboot.\+h$>$}\newline
+{\ttfamily \#include "{}websockets.\+h"{}}\newline
+{\ttfamily \#include "{}http\+\_\+requests.\+h"{}}\newline
+\doxysubsubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{main_8c_a4e2617ed2ed126cfdf6f537d26ea14a0}\label{main_8c_a4e2617ed2ed126cfdf6f537d26ea14a0} 
+\#define {\bfseries FORWARD\+\_\+\+NODE}~DT\+\_\+\+NODELABEL(forward)
+\item 
+\Hypertarget{main_8c_ab2ab3f795890edd232dacd1bf163ef02}\label{main_8c_ab2ab3f795890edd232dacd1bf163ef02} 
+\#define {\bfseries LEFT\+\_\+\+NODE}~DT\+\_\+\+NODELABEL(left)
+\item 
+\Hypertarget{main_8c_ae4fbe8a34f580e60f6ed9f42c245489c}\label{main_8c_ae4fbe8a34f580e60f6ed9f42c245489c} 
+\#define {\bfseries RIGHT\+\_\+\+NODE}~DT\+\_\+\+NODELABEL(right)
+\item 
+\Hypertarget{main_8c_a06a880b307d889dad423db2924f8ae7a}\label{main_8c_a06a880b307d889dad423db2924f8ae7a} 
+\#define {\bfseries BACK\+\_\+\+NODE}~DT\+\_\+\+NODELABEL(back)
+\item 
+\Hypertarget{main_8c_a5cc88945f5ecce78fd96d807f1008183}\label{main_8c_a5cc88945f5ecce78fd96d807f1008183} 
+\#define {\bfseries TEST\+\_\+\+NODE}~DT\+\_\+\+NODELABEL(test)
+\item 
+\Hypertarget{main_8c_a823ab3dba0d7749613216922b17b4d4a}\label{main_8c_a823ab3dba0d7749613216922b17b4d4a} 
+\#define {\bfseries ULTRA\+\_\+\+NODE}~DT\+\_\+\+NODELABEL(ultra)
+\item 
+\Hypertarget{main_8c_ad13b910e91f76ea7156d285e09627db9}\label{main_8c_ad13b910e91f76ea7156d285e09627db9} 
+\#define {\bfseries POLLING\+\_\+\+PER}~50
+\item 
+\Hypertarget{main_8c_afe28340743d9e0f0f7b834e9da0609a1}\label{main_8c_afe28340743d9e0f0f7b834e9da0609a1} 
+\#define {\bfseries ULTRA\+\_\+\+STACK\+\_\+\+SIZE}~1024 \texorpdfstring{$\ast$}{*} 8
+\item 
+\Hypertarget{main_8c_ac3a350cb2cb2a631f2495d7418c39eb6}\label{main_8c_ac3a350cb2cb2a631f2495d7418c39eb6} 
+\#define {\bfseries ULTRA\+\_\+\+PRIORITY}~-\/69
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+enum \mbox{\hyperlink{main_8c_a59b8883ba5218b023362274a737b03fa}{CMD\+\_\+\+Types}} \{ \newline
+{\bfseries FORWARD}
+, {\bfseries LEFT}
+, {\bfseries RIGHT}
+, {\bfseries BACK}
+, \newline
+{\bfseries ENDFORWARD}
+, {\bfseries ENDLEFT}
+, {\bfseries ENDRIGHT}
+, {\bfseries ENDBACK}
+ \}
+\begin{DoxyCompactList}\small\item\em Enum for possible commands. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{main_8c_a68c1b0db091d8bb30ccc8f140101efce}{wifi\+\_\+connect}} (void)
+\begin{DoxyCompactList}\small\item\em Attempts to connect to Wi-\/\+FI based on wifi\+\_\+settings.\+h. \end{DoxyCompactList}\item 
+\Hypertarget{main_8c_a21d661992e0dae7921f02a2b294763f2}\label{main_8c_a21d661992e0dae7921f02a2b294763f2} 
+void {\bfseries wifi\+\_\+status} (void)
+\begin{DoxyCompactList}\small\item\em Get the current network status. \end{DoxyCompactList}\item 
+\Hypertarget{main_8c_aeb58d8eeac22c79275080fa89b2a2f19}\label{main_8c_aeb58d8eeac22c79275080fa89b2a2f19} 
+void {\bfseries wifi\+\_\+disconnect} (void)
+\begin{DoxyCompactList}\small\item\em Attempt to disconnect from Wi-\/\+Fi. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{main_8c_afffb98a16d047607da7512b74a609533}{connect\+\_\+and\+\_\+get\+\_\+socket}} (void)
+\begin{DoxyCompactList}\small\item\em Tries to connect to HTTP Server. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{main_8c_a1261d4ee923310280c3c6a7e63495b70}{connect\+\_\+websocket}} (int sock)
+\begin{DoxyCompactList}\small\item\em Tries to connect to a Web\+Socket endpoint on the HTTP Server. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{main_8c_a840291bc02cba5474a4cb46a9b9566fe}{main}} (void)
+\begin{DoxyCompactList}\small\item\em Main function. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Main setup and event-\/loop based program running on ESP32. 
+
+Includes Wi-\/\+Fi management functionality and implements Web\+Socket and HTTP communication In the future, multi-\/core would be necessary 
+
+\doxysubsection{Enumeration Type Documentation}
+\Hypertarget{main_8c_a59b8883ba5218b023362274a737b03fa}\index{main.c@{main.c}!CMD\_Types@{CMD\_Types}}
+\index{CMD\_Types@{CMD\_Types}!main.c@{main.c}}
+\doxysubsubsection{\texorpdfstring{CMD\_Types}{CMD\_Types}}
+{\footnotesize\ttfamily \label{main_8c_a59b8883ba5218b023362274a737b03fa} 
+enum \mbox{\hyperlink{main_8c_a59b8883ba5218b023362274a737b03fa}{CMD\+\_\+\+Types}}}
+
+
+
+Enum for possible commands. 
+
+Fits in 3 bits 
+
+\doxysubsection{Function Documentation}
+\Hypertarget{main_8c_afffb98a16d047607da7512b74a609533}\index{main.c@{main.c}!connect\_and\_get\_socket@{connect\_and\_get\_socket}}
+\index{connect\_and\_get\_socket@{connect\_and\_get\_socket}!main.c@{main.c}}
+\doxysubsubsection{\texorpdfstring{connect\_and\_get\_socket()}{connect\_and\_get\_socket()}}
+{\footnotesize\ttfamily \label{main_8c_afffb98a16d047607da7512b74a609533} 
+int connect\+\_\+and\+\_\+get\+\_\+socket (\begin{DoxyParamCaption}\item[{void}]{}{}\end{DoxyParamCaption})}
+
+
+
+Tries to connect to HTTP Server. 
+
+\begin{DoxyReturn}{Returns}
+int\+: Socket file descriptor upon success or -\/1 upon fail 
+\end{DoxyReturn}
+\Hypertarget{main_8c_a1261d4ee923310280c3c6a7e63495b70}\index{main.c@{main.c}!connect\_websocket@{connect\_websocket}}
+\index{connect\_websocket@{connect\_websocket}!main.c@{main.c}}
+\doxysubsubsection{\texorpdfstring{connect\_websocket()}{connect\_websocket()}}
+{\footnotesize\ttfamily \label{main_8c_a1261d4ee923310280c3c6a7e63495b70} 
+int connect\+\_\+websocket (\begin{DoxyParamCaption}\item[{int}]{sock}{}\end{DoxyParamCaption})}
+
+
+
+Tries to connect to a Web\+Socket endpoint on the HTTP Server. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em sock} & Socket file descriptor \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+int\+: Web\+Socket file descriptor upon success, -\/1 upon failure 
+\end{DoxyReturn}
+\Hypertarget{main_8c_a840291bc02cba5474a4cb46a9b9566fe}\index{main.c@{main.c}!main@{main}}
+\index{main@{main}!main.c@{main.c}}
+\doxysubsubsection{\texorpdfstring{main()}{main()}}
+{\footnotesize\ttfamily \label{main_8c_a840291bc02cba5474a4cb46a9b9566fe} 
+int main (\begin{DoxyParamCaption}\item[{void}]{}{}\end{DoxyParamCaption})}
+
+
+
+Main function. 
+
+Continuously tries to connect to U-\/\+Peeper open wifi network, then to the backend host, and finally to the mcu Web\+Socket endpoint. The OS reboots upon disconnection or another failure. \Hypertarget{main_8c_a68c1b0db091d8bb30ccc8f140101efce}\index{main.c@{main.c}!wifi\_connect@{wifi\_connect}}
+\index{wifi\_connect@{wifi\_connect}!main.c@{main.c}}
+\doxysubsubsection{\texorpdfstring{wifi\_connect()}{wifi\_connect()}}
+{\footnotesize\ttfamily \label{main_8c_a68c1b0db091d8bb30ccc8f140101efce} 
+void wifi\+\_\+connect (\begin{DoxyParamCaption}\item[{void}]{}{}\end{DoxyParamCaption})}
+
+
+
+Attempts to connect to Wi-\/\+FI based on wifi\+\_\+settings.\+h. 
+
+Set to only work with open networks (no security) 
