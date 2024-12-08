@@ -7,6 +7,14 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+/**
+ * @file main.c
+ * @brief Main setup and event-loop based program running on ESP32
+ *
+ * Includes Wi-Fi management functionality and implements WebSocket and HTTP communication
+ * In the future, multi-core would be necessary
+ */
+
 /*
  * Craig Peacock's original code actually doesn't compile on current Zephyr
  * So this is modified to keep roughly the same base functionality while being compilable
@@ -32,6 +40,12 @@ static struct net_mgmt_event_callback ipv4_cb;
 
 static int sock = -1;
 
+/**
+ * @enum CMD_Types
+ * @brief Enum for possible commands
+ *
+ * Fits in 3 bits
+ */
 static enum CMD_Types {
 	FORWARD,
 	LEFT,
@@ -92,6 +106,12 @@ K_THREAD_STACK_DEFINE(ultra_stack_area, ULTRA_STACK_SIZE);
 struct k_thread ultra_thread_data;
 */
 
+/**
+ * @brief Pass callback in to handle status upon connect
+ * @param cb: Callback structure
+ *
+ * Reboots if failed, else gives wifi_connected semaphore
+ */
 static void handle_wifi_connect_result(struct net_mgmt_event_callback *cb)
 {
 	const struct wifi_status *status = (const struct wifi_status *)cb->info;
@@ -105,6 +125,12 @@ static void handle_wifi_connect_result(struct net_mgmt_event_callback *cb)
 	}
 }
 
+/**
+ * @brief Pass callback in to handle status upon disconnect
+ * @param cb: Callback structure
+ *
+ * Always reboots
+ */
 static void handle_wifi_disconnect_result(struct net_mgmt_event_callback *cb)
 {
 	const struct wifi_status *status = (const struct wifi_status *)cb->info;
@@ -118,6 +144,13 @@ static void handle_wifi_disconnect_result(struct net_mgmt_event_callback *cb)
 	}
 }
 
+/**
+ * @brief Checks if IPV4 address has been obtained from DHCP
+ * @param iface: Network interface structure
+ *
+ * Prints obtained address(es), the subnet mask, and router address
+ * Also gives the ipv4_address_obtained semaphore
+ */
 static void handle_ipv4_result(struct net_if *iface)
 {
 	int i = 0;
@@ -144,6 +177,13 @@ static void handle_ipv4_result(struct net_if *iface)
 	k_sem_give(&ipv4_address_obtained);
 }
 
+/**
+ * @brief Logic function that calls the appropriate handling function
+ *
+ * @param cb: Callback Structure
+ * @param mgmt_event: Unsigned integer code for management event
+ * @param iface: Network Interface Structure
+ */
 static void wifi_mgmt_event_handler(struct net_mgmt_event_callback *cb, uint32_t mgmt_event,
 				    struct net_if *iface)
 {
@@ -166,7 +206,11 @@ static void wifi_mgmt_event_handler(struct net_mgmt_event_callback *cb, uint32_t
 	}
 }
 
-// No Security network (you may have to change the security to PSK and include the psk)
+/**
+ * @brief Attempts to connect to Wi-FI based on wifi_settings.h
+ *
+ * Set to only work with open networks (no security)
+ */
 void wifi_connect(void)
 {
 	struct net_if *iface = net_if_get_default();
@@ -191,6 +235,10 @@ void wifi_connect(void)
 	}
 }
 
+/**
+ * @brief Get the current network status
+ *
+ */
 void wifi_status(void)
 {
 	struct net_if *iface = net_if_get_default();
@@ -211,6 +259,10 @@ void wifi_status(void)
 	}
 }
 
+/**
+ * @brief Attempt to disconnect from Wi-Fi
+ *
+ */
 void wifi_disconnect(void)
 {
 	struct net_if *iface = net_if_get_default();
@@ -220,6 +272,11 @@ void wifi_disconnect(void)
 	}
 }
 
+/**
+ * @brief Tries to connect to HTTP Server
+ *
+ * @return int: Socket file descriptor upon success or -1 upon fail
+ */
 // returns the socket fd and -1 upon fail
 int connect_and_get_socket(void)
 {
@@ -280,7 +337,12 @@ int connect_and_get_socket(void)
 	return sock;
 }
 
-// returns websocket fd
+/**
+ * @brief Tries to connect to a WebSocket endpoint on the HTTP Server
+ *
+ * @param sock: Socket file descriptor
+ * @return int: WebSocket file descriptor upon success, -1 upon failure
+ */
 int connect_websocket(int sock)
 {
 	int websock = -1;
@@ -309,7 +371,9 @@ int connect_websocket(int sock)
 	return websock;
 }
 
-/*
+/**
+ * @brief Main function
+ *
  * Continuously tries to connect to U-Peeper open wifi network, then to the backend host, and
  * finally to the mcu WebSocket endpoint. The OS reboots upon disconnection or another failure.
  */

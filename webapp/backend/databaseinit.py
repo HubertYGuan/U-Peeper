@@ -1,3 +1,7 @@
+##
+# @file databaseinit.py
+# @brief File to initiate SQLite db connections
+
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
 
 from db_models.db_models import DB_Base, Event_Type, Event
@@ -14,7 +18,8 @@ DB_engine = create_async_engine(
 
 DB_Session = async_sessionmaker(DB_engine)
 
-
+##
+# @brief Obtain AsyncSession of database
 async def Get_DB():
     async with DB_engine.begin() as conn:
         await conn.run_sync(DB_Base.metadata.create_all)

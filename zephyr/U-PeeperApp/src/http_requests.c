@@ -4,8 +4,6 @@
 #include <zephyr/kernel.h>
 #include "http_requests.h"
 
-
-
 void PrintAddrInfoResults(struct zsock_addrinfo **results)
 {
 	char ipv4[INET_ADDRSTRLEN];
